@@ -913,6 +913,24 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   <data name="Menu.Integrations.ShowGameActivity.Title" xml:space="preserve">
     <value>Show game activity</value>
   </data>
+  <data name="Menu.Integrations.GameWindowControl.Title" xml:space="preserve">
+    <value>Game window control</value>
+  </data>
+  <data name="Menu.Integrations.GameWindowControl.Description" xml:space="preserve">
+    <value>Allow game to move and resize the window</value>
+  </data>
+  <data name="Menu.Integrations.RPCRatelimit.Title" xml:space="preserve">
+    <value>RPC Ratelimit</value>
+  </data>
+  <data name="Menu.Integrations.RPCRatelimit.Description" xml:space="preserve">
+    <value>The minimum wait time between RPC updates</value>
+  </data>
+  <data name="Menu.Integrations.LogReadInterval.Title" xml:space="preserve">
+    <value>Log File Read Interval</value>
+  </data>
+  <data name="Menu.Integrations.LogReadInterval.Description" xml:space="preserve">
+    <value>Time in miliseconds the roblox log is checked</value>
+  </data>
   <data name="Menu.Integrations.ShowServerDetails.Description" xml:space="preserve">
     <value>When you join a game, you'll be notified of where your server's located. Won't show in fullscreen.</value>
   </data>

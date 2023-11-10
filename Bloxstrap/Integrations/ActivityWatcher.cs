@@ -58,10 +58,7 @@
             //
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
-            int delay = 1000;
-
-            if (App.Settings.Prop.OhHeyYouFoundMe)
-                delay = 250;
+            int delay = App.Settings.Prop.LogReadInterval;
 
             string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
 
@@ -106,14 +103,20 @@
 
             using StreamReader sr = new(logFileStream);
 
+            DateTime lastTime = DateTime.Now;
+
             while (!IsDisposed)
             {
                 string? log = await sr.ReadLineAsync();
 
+                //App.Logger.WriteLine(LOG_IDENT, $"epic log read attempt");
+
                 if (string.IsNullOrEmpty(log))
+                    //await Task.Delay(delay);
                     logUpdatedEvent.WaitOne(delay);
-                else
+                else {
                     ExamineLogEntry(log);
+                }
             }
         }
 
@@ -238,7 +241,7 @@
 
                     App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
 
-                    if ((DateTime.Now - LastRPCRequest).TotalSeconds <= 1)
+                    if ((DateTime.Now - LastRPCRequest).TotalSeconds <= App.Settings.Prop.RPCRatelimit)
                     {
                         App.Logger.WriteLine(LOG_IDENT, "Dropping message as ratelimit has been hit");
                         return;

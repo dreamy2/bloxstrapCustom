@@ -352,6 +352,7 @@ namespace Bloxstrap
             List<Process> autocloseProcesses = new();
             ActivityWatcher? activityWatcher = null;
             DiscordRichPresence? richPresence = null;
+            WindowController? windowController = null;
 
             App.Logger.WriteLine(LOG_IDENT, $"Started Roblox (PID {gameClientPid})");
 
@@ -375,6 +376,12 @@ namespace Bloxstrap
                 shouldWait = true;
 
                 App.NotifyIcon?.SetActivityWatcher(activityWatcher);
+
+                if (App.Settings.Prop.CanGameMoveWindow)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Allowing Game Window Control");
+                    windowController = new(activityWatcher);
+                }
 
                 if (App.Settings.Prop.UseDiscordRichPresence)
                 {
@@ -424,6 +431,7 @@ namespace Bloxstrap
 
             App.Logger.WriteLine(LOG_IDENT, $"Roblox has exited");
 
+            windowController?.Dispose();
             richPresence?.Dispose();
 
             foreach (Process process in autocloseProcesses)

@@ -22,6 +22,9 @@ namespace Bloxstrap.Models
         // integration configuration
         public bool EnableActivityTracking { get; set; } = true;
         public bool UseDiscordRichPresence { get; set; } = true;
+        public bool CanGameMoveWindow { get; set; } = true;
+        public int RPCRatelimit { get; set; } = 0;
+        public int LogReadInterval { get; set; } = 1;
         public bool HideRPCButtons { get; set; } = true;
         public bool ShowServerDetails { get; set; } = false;
         public ObservableCollection<CustomIntegration> CustomIntegrations { get; set; } = new();
