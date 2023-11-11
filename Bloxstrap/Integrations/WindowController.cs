@@ -155,6 +155,38 @@ namespace Bloxstrap.Integrations
 
                 SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, title);
             }
+            else if (message.Command == "SetBorderType" && App.Settings.Prop.CanGameMoveWindow)
+            {
+                Models.BloxstrapRPC.WindowBorderType? windowData;
+
+                try
+                {
+                    windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowMessage>();
+                }
+                catch (Exception)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization threw an exception)");
+                    return;
+                }
+
+                if (windowData is null)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization returned null)");
+                    return;
+                }
+
+                string borderType = "windowed";
+                if (windowData.BorderType is not null) {
+                    borderType = windowData.BorderType;
+                }
+                try
+                {
+                    // fucking hell it's a todo now
+                    // i got rusty as hell in C# apologies
+                } catch (Exception) {
+                    return;
+                }
+            }
             else
             {
                 return;
