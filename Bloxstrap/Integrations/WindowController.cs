@@ -1,7 +1,13 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Runtime.InteropServices;
-using Windows.Win32.Foundation;
+using System.Drawing;
+
+public struct Rect {
+   public int Left { get; set; }
+   public int Top { get; set; }
+   public int Right { get; set; }
+   public int Bottom { get; set; }
+}
 
 namespace Bloxstrap.Integrations
 {
@@ -10,6 +16,19 @@ namespace Bloxstrap.Integrations
         private readonly ActivityWatcher _activityWatcher;
         private IntPtr _currentWindow;
         private bool _foundWindow = false;
+        public const uint WM_SETTEXT = 0x000C;
+
+        private double screenSizeX = 0;
+        private double screenSizeY = 0;
+        private int _lastX = 0;
+        private int _lastY = 0;
+        private int _lastWidth = 0;
+        private int _lastHeight = 0;
+
+        // 1280x720 as default
+        private double defaultScreenSizeX = 1280;
+        private double defaultScreenSizeY = 720;
+
 
         public WindowController(ActivityWatcher activityWatcher)
         {
@@ -18,16 +37,40 @@ namespace Bloxstrap.Integrations
 
             _currentWindow = FindWindow("Roblox",0);
             _foundWindow = !(_currentWindow == (IntPtr)0);
+
+            if (_foundWindow) { onWindowFound(); }
+
+            screenSizeX = SystemParameters.PrimaryScreenWidth;
+            screenSizeY = SystemParameters.PrimaryScreenHeight;
         }
 
-        public const uint WM_SETTEXT = 0x000C;
+        public void onWindowFound() {
+            Rect winRect = new Rect();
+            GetWindowRect(_currentWindow, ref winRect);    
+            _lastX = winRect.Left;
+            _lastY = winRect.Top;
+            _lastWidth = winRect.Right - winRect.Left;
+            _lastHeight = winRect.Bottom - winRect.Top;
+
+            //dpi awareness
+            using (Graphics graphics = Graphics.FromHwnd(_currentWindow))
+                {
+                    screenSizeX *= (double)(graphics.DpiX / 96);
+                    screenSizeY *= (double)(graphics.DpiY / 96);
+                }
+
+            App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
+        }
 
         public void OnMessage(Message message) {
             const string LOG_IDENT = "WindowController::OnMessage";
 
+            // try to find window now
             if (!_foundWindow) {
                 _currentWindow = FindWindow("Roblox",0);
                 _foundWindow = !(_currentWindow == (IntPtr)0);
+
+                if (_foundWindow) { onWindowFound(); }
             }
 
             if (_currentWindow == (IntPtr)0) {return;}
@@ -52,49 +95,37 @@ namespace Bloxstrap.Integrations
                     return;
                 }
 
-                int x = 0; 
-                int y = 0; 
+                double scaleWidth = defaultScreenSizeX;
+                double scaleHeight = defaultScreenSizeY;
 
-                // Target 720p as default
-                int w = 1280; 
-                int h = 720;
-
-                double originalW = SystemParameters.PrimaryScreenWidth; 
-                double originalH = SystemParameters.PrimaryScreenHeight;
-
-                if (windowData.X is not null) {
-                    x = (int) windowData.X;
-                }
-
-                if (windowData.Y is not null) {
-                    y = (int) windowData.Y;
-                }
-
-                if (windowData.Width is not null) {
-                    w = (int) windowData.Width;
-                }
-
-                if (windowData.Height is not null) {
-                    h = (int) windowData.Height;
-                }
-
-                // This method for scaling is horrible, but it works.
-                
                 if (windowData.ScaleWidth is not null) {
-                    float scale = (float) (originalW / windowData.ScaleWidth);
-
-                    w = (int) Math.Round(w * scale);
-                    x = (int) Math.Round(x * scale);
+                    scaleWidth = (double) windowData.ScaleWidth;
                 }
 
                 if (windowData.ScaleHeight is not null) {
-                    float scale = (float) (originalH / windowData.ScaleHeight);
-
-                    h = (int) Math.Round(h * scale);
-                    y = (int) Math.Round(y * scale);
+                    scaleHeight = (double) windowData.ScaleHeight;
                 }
 
-                MoveWindow(_currentWindow,x,y,w,h,true);
+                float scaleX = (float) (screenSizeX / scaleWidth);
+                float scaleY = (float) (screenSizeY / scaleHeight);
+
+                if (windowData.X is not null) {
+                    _lastX = (int) (windowData.X * scaleX);
+                }
+
+                if (windowData.Y is not null) {
+                    _lastY = (int) (windowData.Y * scaleY);
+                }
+
+                if (windowData.Width is not null) {
+                    _lastWidth = (int) (windowData.Width * scaleX);
+                }
+
+                if (windowData.Height is not null) {
+                    _lastHeight = (int) (windowData.Height * scaleY);
+                }
+
+                MoveWindow(_currentWindow,_lastX,_lastY,_lastWidth,_lastHeight,true);
                 App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
             }
             else if (message.Command == "SetWindowTitle"  && App.Settings.Prop.CanGameMoveWindow)
@@ -157,5 +188,8 @@ namespace Bloxstrap.Integrations
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
     }
 }

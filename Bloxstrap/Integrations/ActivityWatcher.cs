@@ -27,7 +27,6 @@
         public event EventHandler<Message>? OnRPCMessage;
 
         private readonly Dictionary<string, string> GeolocationCache = new();
-        private DateTime LastRPCRequest;
 
         public string LogLocation = null!;
 
@@ -101,6 +100,10 @@
             };
             logWatcher.Changed += (s, e) => logUpdatedEvent.Set();
 
+            // problems with logWatcher:
+            // since it works like explorer detects changes, the only changes it will detect are:
+            // (file start?) and file closed, firing only twice, so it doesnt fire streamed changes stuff
+
             using StreamReader sr = new(logFileStream);
 
             DateTime lastTime = DateTime.Now;
@@ -109,11 +112,10 @@
             {
                 string? log = await sr.ReadLineAsync();
 
-                //App.Logger.WriteLine(LOG_IDENT, $"epic log read attempt");
-
-                if (string.IsNullOrEmpty(log))
-                    //await Task.Delay(delay);
+                if (string.IsNullOrEmpty(log)) {
                     logUpdatedEvent.WaitOne(delay);
+                    //await Task.Delay(delay);
+                }
                 else {
                     ExamineLogEntry(log);
                 }
@@ -241,12 +243,6 @@
 
                     App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
 
-                    if ((DateTime.Now - LastRPCRequest).TotalSeconds <= App.Settings.Prop.RPCRatelimit)
-                    {
-                        App.Logger.WriteLine(LOG_IDENT, "Dropping message as ratelimit has been hit");
-                        return;
-                    }
-
                     try
                     {
                         message = JsonSerializer.Deserialize<Message>(messagePlain);
@@ -270,8 +266,6 @@
                     }
 
                     OnRPCMessage?.Invoke(this, message);
-
-                    LastRPCRequest = DateTime.Now;
                 }
             }
         }

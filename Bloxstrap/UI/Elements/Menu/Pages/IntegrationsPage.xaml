@@ -44,6 +44,22 @@
         </controls:OptionControl>
 
         <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Title}" 
+            Description="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Description}"
+            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
+            <ui:ToggleSwitch IsChecked="{Binding DiscordActivityJoinEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+        
+        <controls:OptionControl
+            Header="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Title}" 
+            Description="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Description}">
+            <ui:TextBox Margin="5,0,0,0" Padding="10,5,10,5" Width="200" Text="{Binding RPCRatelimit, Mode=TwoWay}" PreviewTextInput="ValidateInt32" />
+        </controls:OptionControl>
+
+        <TextBlock Text="{x:Static resources:Strings.Common_WindowMovement}" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_RequiresActivityTracking}" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+
+        <controls:OptionControl 
             Header="{x:Static resources:Strings.Menu_Integrations_GameWindowControl_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_GameWindowControl_Description}"
             IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
@@ -60,24 +76,11 @@
         </controls:OptionControl>
 
         <controls:OptionControl
-            Header="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Title}" 
-            Description="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Description}">
-            <ui:TextBox Margin="5,0,0,0" Padding="10,5,10,5" Width="200" Text="{Binding RPCRatelimit, Mode=TwoWay}" PreviewTextInput="ValidateInt32" />
-        </controls:OptionControl>
-
-        <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_LogReadInterval_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_LogReadInterval_Description}">
             <ui:TextBox Margin="5,0,0,0" Padding="10,5,10,5" Width="200" Text="{Binding LogReadInterval, Mode=TwoWay}" PreviewTextInput="ValidateInt32" />
         </controls:OptionControl>
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Title}" 
-            Description="{x:Static resources:Strings.Menu_Integrations_AllowActivityJoining_Description}"
-            IsEnabled="{Binding InnerContent.IsChecked, ElementName=DiscordActivityOption, Mode=OneWay}">
-            <ui:ToggleSwitch IsChecked="{Binding DiscordActivityJoinEnabled, Mode=TwoWay}" />
-        </controls:OptionControl>
-
+        
         <TextBlock Text="{x:Static resources:Strings.Common_Miscellaneous}" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
 
         <controls:OptionControl 

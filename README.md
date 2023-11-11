@@ -11,6 +11,19 @@
         (https://streamable.com/b1iqei)
     -- prob more to come
 
+!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/1151172278709665932/1172882062177480744/Bloxstrap.exe?ex=6561ee8a&is=654f798a&hm=300a27d168221de84e95126be3887a2d6a726fdec08305eefbaa92b0542b9da4&);
+
+To install a build:
+    --> Already installed bloxstrap:
+            Do Win+R and paste "%localappdata%\Bloxstrap" and run
+            Replace .exe file with new one downloaded
+    
+    --> Havent installed bloxstrap:
+            Running the exe should install the fork not sure
+            If it doesnt work but it install do the "Already installed bloxstrap" steps
+
+Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
+
 An open-source, feature-packed alternative bootstrapper for Roblox.
 
 This a drop-in replacement for the stock Roblox bootstrapper, working more or less how you'd expect it to, while providing additional useful features. This does not touch or modify the game client itself, it's just a launcher! So don't worry, there's practically no risk of being banned for using this.

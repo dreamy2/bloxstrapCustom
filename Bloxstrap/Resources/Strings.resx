@@ -219,6 +219,9 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Common.Miscellaneous" xml:space="preserve">
     <value>Miscellaneous</value>
   </data>
+  <data name="Common.WindowMovement" xml:space="preserve">
+    <value>Window Control</value>
+  </data>
   <data name="Common.Name" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -914,7 +917,7 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Show game activity</value>
   </data>
   <data name="Menu.Integrations.GameWindowControl.Title" xml:space="preserve">
-    <value>Game window control</value>
+    <value>Game window movement</value>
   </data>
   <data name="Menu.Integrations.GameWindowControl.Description" xml:space="preserve">
     <value>Allows the game to move and resize the window</value>
@@ -929,10 +932,10 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>RPC Ratelimit</value>
   </data>
   <data name="Menu.Integrations.RPCRatelimit.Description" xml:space="preserve">
-    <value>The minimum wait time between RPC updates</value>
+    <value>The minimum wait time (in seconds) between RPC updates</value>
   </data>
   <data name="Menu.Integrations.LogReadInterval.Title" xml:space="preserve">
-    <value>Log File Read Interval</value>
+    <value>Log file read interval</value>
   </data>
   <data name="Menu.Integrations.LogReadInterval.Description" xml:space="preserve">
     <value>Time in milliseconds the roblox log is checked</value>

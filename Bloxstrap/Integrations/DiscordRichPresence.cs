@@ -12,6 +12,7 @@ namespace Bloxstrap.Integrations
         private Message? _stashedRPCMessage;
 
         private bool _visible = true;
+        private DateTime LastRPCRequest;
         private long _currentUniverseId;
         private DateTime? _timeStartedUniverse;
 
@@ -54,6 +55,12 @@ namespace Bloxstrap.Integrations
             if (message.Command != "SetRichPresence")
                 return;
 
+            if ((DateTime.Now - LastRPCRequest).TotalSeconds <= App.Settings.Prop.RPCRatelimit)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Dropping message as ratelimit has been hit");
+                    return;
+                }
+
             if (_currentPresence is null || _currentPresenceCopy is null)
             {
                 if (_activityWatcher.ActivityInGame)
@@ -66,6 +73,8 @@ namespace Bloxstrap.Integrations
                 App.Logger.WriteLine(LOG_IDENT, "Presence is not set, aborting");
                 return;
             }
+
+            LastRPCRequest = DateTime.Now;
 
             Models.BloxstrapRPC.RichPresence? presenceData;
             

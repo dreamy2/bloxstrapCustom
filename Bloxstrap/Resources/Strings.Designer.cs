@@ -359,6 +359,12 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Common.Miscellaneous", resourceCulture);
             }
         }
+
+        public static string Common_WindowMovement {
+            get {
+                return ResourceManager.GetString("Common.WindowMovement", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to Name.
