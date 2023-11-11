@@ -25,6 +25,13 @@ namespace Bloxstrap.Integrations
         public void OnMessage(Message message) {
             const string LOG_IDENT = "WindowController::OnMessage";
 
+            if (!_foundWindow) {
+                _currentWindow = FindWindow("Roblox",0);
+                _foundWindow = !(_currentWindow == (IntPtr)0);
+            }
+
+            if (_currentWindow == (IntPtr)0) {return;}
+
             if (message.Command == "SetWindow")
             {
                 Models.BloxstrapRPC.WindowMessage? windowData;
@@ -44,13 +51,6 @@ namespace Bloxstrap.Integrations
                     App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization returned null)");
                     return;
                 }
-
-                if (!_foundWindow) {
-                    _currentWindow = FindWindow("Roblox",0);
-                    _foundWindow = !(_currentWindow == (IntPtr)0);
-                }
-
-                if (_currentWindow == (IntPtr)0) {return;}
 
                 int x = 0; 
                 int y = 0; 
@@ -116,13 +116,6 @@ namespace Bloxstrap.Integrations
                     App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization returned null)");
                     return;
                 }
-
-                if (!_foundWindow) {
-                    _currentWindow = FindWindow("Roblox",0);
-                    _foundWindow = !(_currentWindow == (IntPtr)0);
-                }
-
-                if (_currentWindow == (IntPtr)0) {return;}
 
                 string title = "Roblox";
                 if (windowData.Name is not null) {
