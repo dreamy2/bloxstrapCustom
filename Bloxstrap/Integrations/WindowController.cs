@@ -153,7 +153,7 @@ namespace Bloxstrap.Integrations
                     }
 
                     MoveWindow(_currentWindow,_lastX,_lastY,_lastWidth,_lastHeight,false);
-                    App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
+                    //App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
                     break;
                 }
                 case "SetWindowTitle": {
@@ -198,7 +198,7 @@ namespace Bloxstrap.Integrations
 
                     try
                     {
-                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowMessage>();
+                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowBorderType>();
                     }
                     catch (Exception)
                     {

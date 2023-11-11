@@ -113,7 +113,7 @@
                 string? log = await sr.ReadLineAsync();
 
                 if (string.IsNullOrEmpty(log)) {
-                    logUpdatedEvent.WaitOne(delay);
+                    logUpdatedEvent.WaitOne(6);
                     //await Task.Delay(delay);
                 }
                 else {
@@ -241,7 +241,7 @@
                     string messagePlain = entry.Substring(entry.IndexOf(GameMessageEntry) + GameMessageEntry.Length + 1);
                     Message? message;
 
-                    App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
+                    //App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
 
                     try
                     {
