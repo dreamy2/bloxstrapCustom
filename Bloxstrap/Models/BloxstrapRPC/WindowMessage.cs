@@ -20,4 +20,7 @@ public class WindowMessage
 
     [JsonPropertyName("scaleHeight")]
     public float? ScaleHeight { get; set; } = null!;
+
+    [JsonPropertyName("reset")]
+    public bool? Reset { get; set; } = null!;
 }
