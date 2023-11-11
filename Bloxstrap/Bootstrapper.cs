@@ -377,11 +377,8 @@ namespace Bloxstrap
 
                 App.NotifyIcon?.SetActivityWatcher(activityWatcher);
 
-                if (App.Settings.Prop.CanGameMoveWindow)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, "Allowing Game Window Control");
-                    windowController = new(activityWatcher);
-                }
+                App.Logger.WriteLine(LOG_IDENT, "Allowing Game Window Control");
+                windowController = new(activityWatcher);
 
                 if (App.Settings.Prop.UseDiscordRichPresence)
                 {

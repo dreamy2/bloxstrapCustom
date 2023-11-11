@@ -51,6 +51,8 @@ namespace Bloxstrap.UI.ViewModels.Menu
                     ShowServerDetailsEnabled = value;
                     DiscordActivityEnabled = value;
                     GameWindowControlEnabled = value;
+                    GameWindowTitleControlEnabled = value;
+
                     RPCRatelimit = 1;
                     LogReadInterval = 1000;
                     DiscordActivityJoinEnabled = value;
@@ -58,6 +60,7 @@ namespace Bloxstrap.UI.ViewModels.Menu
                     OnPropertyChanged(nameof(ShowServerDetailsEnabled));
                     OnPropertyChanged(nameof(DiscordActivityEnabled));
                     OnPropertyChanged(nameof(GameWindowControlEnabled));
+                    OnPropertyChanged(nameof(GameWindowTitleControlEnabled));
                     OnPropertyChanged(nameof(RPCRatelimit));
                     OnPropertyChanged(nameof(LogReadInterval));
                     OnPropertyChanged(nameof(DiscordActivityJoinEnabled));
@@ -86,10 +89,16 @@ namespace Bloxstrap.UI.ViewModels.Menu
             }
         }
 
-         public bool GameWindowControlEnabled
+        public bool GameWindowControlEnabled
         {
             get => App.Settings.Prop.CanGameMoveWindow;
             set => App.Settings.Prop.CanGameMoveWindow = value;
+        }
+
+        public bool GameWindowTitleControlEnabled
+        {
+            get => App.Settings.Prop.CanGameSetWindowTitle;
+            set => App.Settings.Prop.CanGameSetWindowTitle = value;
         }
 
         public int RPCRatelimit
