@@ -32,7 +32,7 @@ namespace Bloxstrap.Integrations
 
             if (_currentWindow == (IntPtr)0) {return;}
 
-            if (message.Command == "SetWindow")
+            if (message.Command == "SetWindow" && App.Settings.Prop.CanGameMoveWindow)
             {
                 Models.BloxstrapRPC.WindowMessage? windowData;
 
@@ -97,7 +97,7 @@ namespace Bloxstrap.Integrations
                 MoveWindow(_currentWindow,x,y,w,h,true);
                 App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
             }
-            else if (message.Command == "SetWindowTitle")
+            else if (message.Command == "SetWindowTitle"  && App.Settings.Prop.CanGameMoveWindow)
             {
                 Models.BloxstrapRPC.WindowTitle? windowData;
 

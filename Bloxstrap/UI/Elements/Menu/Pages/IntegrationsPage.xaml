@@ -51,6 +51,14 @@
             <ui:ToggleSwitch IsChecked="{Binding GameWindowControlEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
+        <controls:OptionControl 
+            Header="{x:Static resources:Strings.Menu_Integrations_GameWindowTitleControl_Title}" 
+            Description="{x:Static resources:Strings.Menu_Integrations_GameWindowTitleControl_Description}"
+            IsEnabled="{Binding InnerContent.IsChecked, ElementName=ActivityTrackingOption, Mode=OneWay}"
+            x:Name="GameWindowTitleControlOption">
+            <ui:ToggleSwitch IsChecked="{Binding GameWindowTitleControlEnabled, Mode=TwoWay}" />
+        </controls:OptionControl>
+
         <controls:OptionControl
             Header="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_RPCRatelimit_Description}">

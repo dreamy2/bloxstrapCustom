@@ -2423,6 +2423,18 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Integrations.GameWindowControl.Description", resourceCulture);
             }
         }
+
+        public static string Menu_Integrations_GameWindowTitleControl_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.GameWindowTitleControl.Title", resourceCulture);
+            }
+        }
+
+        public static string Menu_Integrations_GameWindowTitleControl_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.GameWindowTitleControl.Description", resourceCulture);
+            }
+        }
         
         public static string Menu_Integrations_RPCRatelimit_Title {
             get {
