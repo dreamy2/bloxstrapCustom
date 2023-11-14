@@ -34,12 +34,12 @@ namespace Bloxstrap.Integrations
         private double defaultScreenSizeX = 1280;
         private double defaultScreenSizeY = 720;
 
-
         public WindowController(ActivityWatcher activityWatcher)
         {
             _activityWatcher = activityWatcher;
             _activityWatcher.OnRPCMessage += (_, message) => OnMessage(message);
 
+            // try to find window
             _currentWindow = FindWindow("Roblox",0);
             _foundWindow = !(_currentWindow == (IntPtr)0);
 
@@ -191,7 +191,7 @@ namespace Bloxstrap.Integrations
                     _startingHeight = _lastHeight;
                     break;
                 }
-                case "SetBorderType": {
+                case "SetWindowBorder": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
                     
                     Models.BloxstrapRPC.WindowBorderType? windowData;
@@ -263,5 +263,29 @@ namespace Bloxstrap.Integrations
 
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
+
+        /*
+
+        // window transparency stuff
+
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+        public const int GWL_EXSTYLE = -20;
+        public const int WS_EX_LAYERED = 0x80000;
+        public const int LWA_ALPHA = 0x2;
+
+        public void setWindowAlpha(byte alpha) {
+            // alpha is between 0 and 255
+            SetWindowLong(_currentWindow, GWL_EXSTYLE, GetWindowLong(_currentWindow, GWL_EXSTYLE) ^ WS_EX_LAYERED);
+            SetLayeredWindowAttributes(_currentWindow, 0, alpha, LWA_ALPHA);
+        }
+        */
     }
 }

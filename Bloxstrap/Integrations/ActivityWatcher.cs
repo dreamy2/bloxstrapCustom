@@ -57,7 +57,15 @@
             //
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
-            int delay = App.Settings.Prop.LogReadInterval;
+            int delay = 1000; // default for win title and rpc
+
+            if (App.Settings.Prop.OhHeyYouFoundMe) {
+                delay = 250;
+            }
+
+            if (App.Settings.Prop.CanGameMoveWindow) { // so window can move each frame
+                delay = 6; // 144fps (idea: maybe make game control the fps to run this to)
+            }
 
             string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
 
@@ -113,7 +121,7 @@
                 string? log = await sr.ReadLineAsync();
 
                 if (string.IsNullOrEmpty(log)) {
-                    logUpdatedEvent.WaitOne(6);
+                    logUpdatedEvent.WaitOne(delay);
                     //await Task.Delay(delay);
                 }
                 else {
@@ -241,8 +249,6 @@
                     string messagePlain = entry.Substring(entry.IndexOf(GameMessageEntry) + GameMessageEntry.Length + 1);
                     Message? message;
 
-                    //App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
-
                     try
                     {
                         message = JsonSerializer.Deserialize<Message>(messagePlain);
@@ -263,6 +269,11 @@
                     {
                         App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (Command is empty)");
                         return;
+                    }
+
+                    // window stuff no longer logs
+                    if (!message.Command.Contains("Window")) {
+                        App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
                     }
 
                     OnRPCMessage?.Invoke(this, message);
