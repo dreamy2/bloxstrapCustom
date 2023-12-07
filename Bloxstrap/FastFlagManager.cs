@@ -16,6 +16,8 @@ namespace Bloxstrap
 
         public static IReadOnlyDictionary<string, string> PresetFlags = new Dictionary<string, string>
         {
+            { "Bloxstrap", "FFlagUserIsBloxstrap"},
+
             { "Network.Log", "FLogNetwork" },
             
             { "HTTP.Log", "DFLogHttpTraceLight" },
@@ -233,6 +235,8 @@ namespace Bloxstrap
             base.Load();
 
             CheckManualFullscreenPreset();
+
+            SetPreset("Bloxstrap", true);
 
             // TODO - remove when activity tracking has been revamped
             if (GetPreset("Network.Log") != "7")
