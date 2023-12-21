@@ -2460,30 +2460,6 @@ namespace Bloxstrap.Resources {
             }
         }
         
-        public static string Menu_Integrations_RPCRatelimit_Title {
-            get {
-                return ResourceManager.GetString("Menu.Integrations.RPCRatelimit.Title", resourceCulture);
-            }
-        }
-
-        public static string Menu_Integrations_RPCRatelimit_Description {
-            get {
-                return ResourceManager.GetString("Menu.Integrations.RPCRatelimit.Description", resourceCulture);
-            }
-        }
-
-        public static string Menu_Integrations_LogReadInterval_Title {
-            get {
-                return ResourceManager.GetString("Menu.Integrations.LogReadInterval.Title", resourceCulture);
-            }
-        }
-
-        public static string Menu_Integrations_LogReadInterval_Description {
-            get {
-                return ResourceManager.GetString("Menu.Integrations.LogReadInterval.Description", resourceCulture);
-            }
-        }
-        
         /// <summary>
         ///   Looks up a localized string similar to When you join a game, you&apos;ll be notified of where your server&apos;s located. Won&apos;t show in fullscreen..
         /// </summary>

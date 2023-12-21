@@ -55,7 +55,7 @@ namespace Bloxstrap.Integrations
             if (message.Command != "SetRichPresence")
                 return;
 
-            if ((DateTime.Now - LastRPCRequest).TotalSeconds <= App.Settings.Prop.RPCRatelimit)
+            if ((DateTime.Now - LastRPCRequest).TotalSeconds <= 1)
                 {
                     App.Logger.WriteLine(LOG_IDENT, "Dropping message as ratelimit has been hit");
                     return;

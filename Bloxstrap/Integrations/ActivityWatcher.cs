@@ -57,15 +57,13 @@
             //
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
-            int delay = 1000; // default for win title and rpc
+              int delay = 1000;
 
-            if (App.Settings.Prop.OhHeyYouFoundMe) {
+            if (App.Settings.Prop.OhHeyYouFoundMe)
                 delay = 250;
-            }
 
-            if (App.Settings.Prop.CanGameMoveWindow) { // so window can move each frame
-                delay = 6; // 144fps (idea: maybe make game control the fps to run this to)
-            }
+            if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
+                delay = 1/60 * 1000; // 60fps (idea: maybe make game control the fps to run this to)
 
             string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
 
@@ -120,13 +118,10 @@
             {
                 string? log = await sr.ReadLineAsync();
 
-                if (string.IsNullOrEmpty(log)) {
+                if (string.IsNullOrEmpty(log))
                     logUpdatedEvent.WaitOne(delay);
-                    //await Task.Delay(delay);
-                }
-                else {
+                else
                     ExamineLogEntry(log);
-                }
             }
         }
 

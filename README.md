@@ -11,7 +11,7 @@
         (https://streamable.com/b1iqei)
     -- prob more to come
 
-!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/701695097674137632/1174038421933670431/Bloxstrap.exe?ex=6566237c&is=6553ae7c&hm=9af69264328c380cac7a22193455e1c0e4dabb73d73817d64ca7deec6f98a807&);
+!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/1147608357906174077/1187459318765854790/Bloxstrap.exe?ex=6596f6ab&is=658481ab&hm=e47efcdffd1d5de1d37bcd2000c8bb467c9568fce067df2604846082a0bd1dfb&);
 
 To install a build:
     --> Already installed bloxstrap:

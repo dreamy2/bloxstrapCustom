@@ -1,5 +1,4 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
 
 using Bloxstrap.UI.ViewModels.Menu;
 
@@ -22,7 +21,5 @@ namespace Bloxstrap.UI.Elements.Menu.Pages
             viewModel.SelectedCustomIntegration = (CustomIntegration)((ListBox)sender).SelectedItem;
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomIntegration));
         }
-
-        private void ValidateInt32(object sender, TextCompositionEventArgs e) => e.Handled = !Int32.TryParse(e.Text, out int _);
     }
 }
