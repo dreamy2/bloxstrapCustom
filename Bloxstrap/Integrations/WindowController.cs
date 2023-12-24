@@ -70,12 +70,6 @@ namespace Bloxstrap.Integrations
                 }
 
             //as test for transparent windows
-            // todo:
-            // command for setting color
-            // (maybe) fix for border not being selectable
-            SetWindowLong(_currentWindow, -20, 0x00FF0000);
-            SetLayeredWindowAttributes(_currentWindow, 0x000000, 0, 0x00000001);
-
             App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
         }
 
@@ -231,6 +225,47 @@ namespace Bloxstrap.Integrations
                         return;
                     }
                     
+                    break;
+                }
+                case "SetWindowTransparency": {
+                    Models.BloxstrapRPC.WindowTransparency? windowData;
+
+                    try
+                    {
+                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowTransparency>();
+                    }
+                    catch (Exception)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization threw an exception)");
+                        return;
+                    }
+
+                    if (windowData is null)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization returned null)");
+                        return;
+                    }
+
+                    byte transparency = 1;
+                    uint windowColor = 0x000000;
+
+                    if (windowData.Transparency is not null) {
+                        transparency = (byte) windowData.Transparency;
+                    }
+
+                    if (windowData.Color is not null) {
+                        windowColor = Convert.ToUInt32(windowData.Color, 16);
+                    }
+
+                    if (transparency == 1)
+                    {
+                        SetWindowLong(_currentWindow, -20, 0x00000000);
+                    }
+                    else
+                    {
+                        SetWindowLong(_currentWindow, -20, 0x00FF0000);
+                        SetLayeredWindowAttributes(_currentWindow, windowColor, transparency, 0x00000001);
+                    }
                     break;
                 }
                 default: {
