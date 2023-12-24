@@ -69,6 +69,13 @@ namespace Bloxstrap.Integrations
                     screenSizeY *= (double)(graphics.DpiY / 96);
                 }
 
+            //as test for transparent windows
+            // todo:
+            // command for setting color
+            // (maybe) fix for border not being selectable
+            SetWindowLong(_currentWindow, -20, 0x00FF0000);
+            SetLayeredWindowAttributes(_currentWindow, 0x000000, 0, 0x00000001);
+
             App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
         }
 
@@ -264,6 +271,16 @@ namespace Bloxstrap.Integrations
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
 
+        
+        [DllImport("user32.dll")]
+        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll")]
+        static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
         /*
 
         // window transparency stuff
@@ -281,6 +298,7 @@ namespace Bloxstrap.Integrations
         public const int WS_EX_LAYERED = 0x80000;
         public const int LWA_ALPHA = 0x2;
 
+        // maybe works with alpha
         public void setWindowAlpha(byte alpha) {
             // alpha is between 0 and 255
             SetWindowLong(_currentWindow, GWL_EXSTYLE, GetWindowLong(_currentWindow, GWL_EXSTYLE) ^ WS_EX_LAYERED);
