@@ -65,6 +65,7 @@ end
 ```
 
 To install a build:
+
     --> Already installed bloxstrap:
             Do Win+R and paste "%localappdata%\Bloxstrap" and run
             Replace .exe file with new one downloaded
