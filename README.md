@@ -11,7 +11,58 @@
         (https://streamable.com/b1iqei)
     -- prob more to come
 
-!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/1147608357906174077/1187459318765854790/Bloxstrap.exe?ex=6596f6ab&is=658481ab&hm=e47efcdffd1d5de1d37bcd2000c8bb467c9568fce067df2604846082a0bd1dfb&);
+!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/991660315680964708/1200489435091980399/Bloxstrap.exe?ex=65c65de9&is=65b3e8e9&hm=4e493fc0ce3bdca14eb03c2d6e6dd5de7829d2a0e4cbd69ab60f9cc39a5d6d34&);
+
+EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
+
+```
+-- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
+
+local next = next;
+local round = math.round;
+
+export type Window = {
+    x:				number?,
+    y: 				number?,
+    width:			number?,
+    height: 		number?,
+
+    scaleWidth: 	number?,
+    scaleHeight: 	number?,
+
+    reset:			boolean?,
+}
+
+local prevWinData = {}
+
+function makeDiff(a, b)
+    local new = {};
+    for k,v in b do
+        new[k] = v;
+    end
+
+    for k,v in a do 
+        if new[k]==v then   new[k] = nil   end
+    end
+    return new
+end
+
+function BloxstrapRPC.SetWindow(data:Window)
+
+    if data.reset then
+        BloxstrapRPC.SendMessage("SetWindow", {reset=true});
+        prevWinData = {};
+        return;
+    end
+
+    local diff = makeDiff(prevWinData,data)
+    if not next(diff) then return end;
+
+    prevWinData = data;
+
+    BloxstrapRPC.SendMessage("SetWindow", data)
+end
+```
 
 To install a build:
     --> Already installed bloxstrap:

@@ -18,29 +18,38 @@ namespace Bloxstrap.Integrations
         private bool _foundWindow = false;
         public const uint WM_SETTEXT = 0x000C;
 
+        // 1280x720 as default
+        private double defaultScreenSizeX = 1280;
+        private double defaultScreenSizeY = 720;
+
         private double screenSizeX = 0;
         private double screenSizeY = 0;
+
+        // cache last data to prevent bloating data
         private int _lastX = 0;
         private int _lastY = 0;
         private int _lastWidth = 0;
         private int _lastHeight = 0;
+        private double _lastSCWidth = 0;
+        private double _lastSCHeight = 0;
+        private byte _lastTransparency = 1;
+        private uint _lastWindowColor = 0x000000;
 
         private int _startingX = 0;
         private int _startingY = 0;
         private int _startingWidth = 0;
         private int _startingHeight = 0;
 
-        // 1280x720 as default
-        private double defaultScreenSizeX = 1280;
-        private double defaultScreenSizeY = 720;
-
         public WindowController(ActivityWatcher activityWatcher)
         {
             _activityWatcher = activityWatcher;
             _activityWatcher.OnRPCMessage += (_, message) => OnMessage(message);
 
+            _lastSCWidth = defaultScreenSizeX;
+            _lastSCHeight = defaultScreenSizeY;
+
             // try to find window
-            _currentWindow = FindWindow("Roblox",0);
+            _currentWindow = FindWindow("Roblox");
             _foundWindow = !(_currentWindow == (IntPtr)0);
 
             if (_foundWindow) { onWindowFound(); }
@@ -69,12 +78,20 @@ namespace Bloxstrap.Integrations
                     screenSizeY *= (double)(graphics.DpiY / 96);
                 }
 
-            //as test for transparent windows
             App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
         }
 
         public void resetWindow() {
+            _lastX = _startingX;
+            _lastY = _startingY;
+            _lastWidth = _startingWidth;
+            _lastHeight = _startingHeight;
+
+            _lastTransparency = 1;
+            _lastWindowColor = 0x000000;
+
             MoveWindow(_currentWindow,_startingX,_startingY,_startingWidth,_startingHeight,false);
+            SetWindowLong(_currentWindow, -20, 0x00000000);
             SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, "Roblox");
         }
 
@@ -83,7 +100,7 @@ namespace Bloxstrap.Integrations
 
             // try to find window now
             if (!_foundWindow) {
-                _currentWindow = FindWindow("Roblox",0);
+                _currentWindow = FindWindow("Roblox");
                 _foundWindow = !(_currentWindow == (IntPtr)0);
 
                 if (_foundWindow) { onWindowFound(); }
@@ -123,19 +140,17 @@ namespace Bloxstrap.Integrations
                         return;
                     }
 
-                    double scaleWidth = defaultScreenSizeX;
-                    double scaleHeight = defaultScreenSizeY;
-
                     if (windowData.ScaleWidth is not null) {
-                        scaleWidth = (double) windowData.ScaleWidth;
+                        _lastSCWidth = (double) windowData.ScaleWidth;
                     }
 
                     if (windowData.ScaleHeight is not null) {
-                        scaleHeight = (double) windowData.ScaleHeight;
+                        _lastSCHeight = (double) windowData.ScaleHeight;
                     }
 
-                    float scaleX = (float) (screenSizeX / scaleWidth);
-                    float scaleY = (float) (screenSizeY / scaleHeight);
+                    // scaling
+                    float scaleX = (float) (screenSizeX / _lastSCWidth);
+                    float scaleY = (float) (screenSizeY / _lastSCHeight);
 
                     if (windowData.X is not null) {
                         _lastX = (int) (windowData.X * scaleX);
@@ -246,25 +261,22 @@ namespace Bloxstrap.Integrations
                         return;
                     }
 
-                    byte transparency = 1;
-                    uint windowColor = 0x000000;
-
                     if (windowData.Transparency is not null) {
-                        transparency = (byte) windowData.Transparency;
+                        _lastTransparency = (byte) windowData.Transparency;
                     }
 
                     if (windowData.Color is not null) {
-                        windowColor = Convert.ToUInt32(windowData.Color, 16);
+                        _lastWindowColor = Convert.ToUInt32(windowData.Color, 16);
                     }
 
-                    if (transparency == 1)
+                    if (_lastTransparency == 1)
                     {
                         SetWindowLong(_currentWindow, -20, 0x00000000);
                     }
                     else
                     {
                         SetWindowLong(_currentWindow, -20, 0x00FF0000);
-                        SetLayeredWindowAttributes(_currentWindow, windowColor, transparency, 0x00000001);
+                        SetLayeredWindowAttributes(_currentWindow, _lastWindowColor, _lastTransparency, 0x00000001);
                     }
                     break;
                 }
@@ -279,21 +291,17 @@ namespace Bloxstrap.Integrations
             GC.SuppressFinalize(this);
         }
 
-        private IntPtr FindWindow(string title, int index)
+        private IntPtr FindWindow(string title)
         {
-            List<Process> l = new List<Process>();
-
             Process[] tempProcesses;
             tempProcesses = Process.GetProcesses();
             foreach (Process proc in tempProcesses)
             {
                 if (proc.MainWindowTitle == title)
                 {
-                    l.Add(proc);
+                    return proc.MainWindowHandle;
                 }
             }
-
-            if (l.Count > index) return l[index].MainWindowHandle;
             return (IntPtr)0;
         }
 
@@ -315,30 +323,5 @@ namespace Bloxstrap.Integrations
 
         [DllImport("user32.dll")]
         static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-        /*
-
-        // window transparency stuff
-
-        [DllImport("user32.dll")]
-        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll")]
-        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
-
-        [DllImport("user32.dll")]
-        static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
-
-        public const int GWL_EXSTYLE = -20;
-        public const int WS_EX_LAYERED = 0x80000;
-        public const int LWA_ALPHA = 0x2;
-
-        // maybe works with alpha
-        public void setWindowAlpha(byte alpha) {
-            // alpha is between 0 and 255
-            SetWindowLong(_currentWindow, GWL_EXSTYLE, GetWindowLong(_currentWindow, GWL_EXSTYLE) ^ WS_EX_LAYERED);
-            SetLayeredWindowAttributes(_currentWindow, 0, alpha, LWA_ALPHA);
-        }
-        */
     }
 }

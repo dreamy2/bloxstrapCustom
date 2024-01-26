@@ -8,6 +8,7 @@ namespace Bloxstrap
 {
     public class FastFlagManager : JsonManager<Dictionary<string, object>>
     {
+        public Boolean allowDetection = true;
         public override string FileLocation => Path.Combine(Paths.Modifications, "ClientSettings\\ClientAppSettings.json");
 
         // this is the value of the 'FStringPartTexturePackTablePre2022' flag
@@ -17,6 +18,7 @@ namespace Bloxstrap
         public static IReadOnlyDictionary<string, string> PresetFlags = new Dictionary<string, string>
         {
             { "Bloxstrap", "FFlagUserIsBloxstrap"},
+            { "WindowMovement", "FFlagUserAllowsWindowMovement"},
 
             { "Network.Log", "FLogNetwork" },
             
@@ -236,7 +238,13 @@ namespace Bloxstrap
 
             CheckManualFullscreenPreset();
 
-            SetPreset("Bloxstrap", true);
+            // todo: tracking settings?
+
+            // fflag for detecting if bloxstrap is being used (may remove later)
+            SetPreset("Bloxstrap", allowDetection ? true : null);
+
+            // fflag for detecting if window movement is allowed in order to prevent log bloat when disabled
+            SetPreset("WindowMovement", (App.Settings.Prop.CanGameMoveWindow & allowDetection) ? true : null);
 
             // TODO - remove when activity tracking has been revamped
             if (GetPreset("Network.Log") != "7")
