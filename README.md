@@ -15,7 +15,7 @@
 
 EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
-```
+```lua
 -- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
 
 local next = next;
@@ -65,13 +65,13 @@ end
 ```
 
 To install a build:
-    --> Already installed bloxstrap:
-            Do Win+R and paste "%localappdata%\Bloxstrap" and run
-            Replace .exe file with new one downloaded
+    - Already installed bloxstrap:
+        Do Win+R and paste "%localappdata%\Bloxstrap" and run
+        Replace .exe file with new one downloaded
     
-    --> Havent installed bloxstrap:
-            Running the exe should install the fork not sure
-            If it doesnt work but it install do the "Already installed bloxstrap" steps
+    - Havent installed bloxstrap:
+        Running the exe should install the fork not sure
+        If it doesnt work but it install do the "Already installed bloxstrap" steps
 
 Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
 
