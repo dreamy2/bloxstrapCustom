@@ -99,10 +99,6 @@ namespace Bloxstrap
 
             message = message.Replace("{product}", productName);
 
-            // yea idk
-            if (App.Settings.Prop.BootstrapperStyle == BootstrapperStyle.ByfronDialog)
-                message = message.Replace("...", "");
-
             if (Dialog is not null)
                 Dialog.Message = message;
         }
@@ -708,13 +704,13 @@ namespace Bloxstrap
                 {
                     foreach (Process process in Process.GetProcessesByName(App.RobloxPlayerAppName))
                     {
-                        process.CloseMainWindow();
+                        process.Kill();
                         process.Close();
                     }
 
                     foreach (Process process in Process.GetProcessesByName(App.RobloxStudioAppName))
                     {
-                        process.CloseMainWindow();
+                        process.Kill();
                         process.Close();
                     }
                 }
