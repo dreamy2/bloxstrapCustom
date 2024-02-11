@@ -59,7 +59,7 @@
 
               int delay = 1000;
 
-            if (App.Settings.Prop.OhHeyYouFoundMe)
+            if (App.Settings.Prop.PowerTools)
                 delay = 250;
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
