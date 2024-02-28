@@ -11,7 +11,7 @@
         (https://streamable.com/b1iqei)
     -- prob more to come
 
-!! CURRENT BUILD -> [Build](https://cdn.discordapp.com/attachments/991660315680964708/1200489435091980399/Bloxstrap.exe?ex=65c65de9&is=65b3e8e9&hm=4e493fc0ce3bdca14eb03c2d6e6dd5de7829d2a0e4cbd69ab60f9cc39a5d6d34&);
+!! CURRENT BUILD -> [Build](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe);
 
 EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
