@@ -60,7 +60,7 @@ function BloxstrapRPC.SetWindow(data:Window)
 
     prevWinData = data;
 
-    BloxstrapRPC.SendMessage("SetWindow", data)
+    BloxstrapRPC.SendMessage("SetWindow", diff)
 end
 ```
 
