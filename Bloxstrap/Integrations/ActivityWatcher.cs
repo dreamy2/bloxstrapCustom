@@ -1,6 +1,4 @@
-﻿using Bloxstrap.UI.ViewModels.Menu;
-
-namespace Bloxstrap.Integrations
+﻿namespace Bloxstrap.Integrations
 {
     public class ActivityWatcher : IDisposable
     {
@@ -64,7 +62,7 @@ namespace Bloxstrap.Integrations
 
             delay = 1000;
             windowLogDelay = 1000/Math.Min(
-                App.Settings.Prop.WindowLogReadFPS<1 ? 1 : 0,
+                App.Settings.Prop.WindowLogReadFPS<1 ? 1 : App.Settings.Prop.WindowLogReadFPS,
                 int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int fpsUsed) ? fpsUsed : 60);
 
             if (App.Settings.Prop.PowerTools)
