@@ -17,7 +17,6 @@ EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
 ```lua
 -- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
-
 local next = next;
 local round = math.round;
 
@@ -32,6 +31,16 @@ export type Window = {
 
     reset:			boolean?,
 }
+
+function GetFFlag(flag)
+	local suc,result = pcall(function()
+		return UserSettings():IsUserFeatureEnabled(flag);
+	end)
+
+	return suc and result or false;
+end
+
+local winMovementAllowed = GetFFlag("UserAllowsWindowMovement");
 
 local prevWinData = {}
 
@@ -48,11 +57,18 @@ function makeDiff(a, b)
 end
 
 function BloxstrapRPC.SetWindow(data:Window)
+    if not winMovementAllowed then return end;
 
     if data.reset then
         BloxstrapRPC.SendMessage("SetWindow", {reset=true});
         prevWinData = {};
         return;
+    end
+
+    data.reset = nil;
+
+    for i,v in data do
+        data[i] = round(v)
     end
 
     local diff = makeDiff(prevWinData,data)

@@ -87,6 +87,9 @@ namespace Bloxstrap.Integrations
             _lastWidth = _startingWidth;
             _lastHeight = _startingHeight;
 
+            _lastSCWidth = defaultScreenSizeX;
+            _lastSCHeight = defaultScreenSizeY;
+
             _lastTransparency = 1;
             _lastWindowColor = 0x000000;
 
@@ -110,10 +113,15 @@ namespace Bloxstrap.Integrations
 
             switch(message.Command)
             {
-                case "RestoreWindow": {
-                    resetWindow();
+                case "BeginListeningWindow": {
                     break;
                 }
+                case "StopListeningWindow": {
+                    break;
+                }
+                case "RestoreWindowState": case "RestoreWindow":
+                    resetWindow();
+                    break;
                 case "SetWindow": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
 
@@ -200,14 +208,14 @@ namespace Bloxstrap.Integrations
                     SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, title);
                     break;
                 }
-                case "SetWindowDefault": {
+                // save window state sounds better
+                case "SaveWindowState": case "SetWindowDefault":
                     _startingX = _lastX;
                     _startingY = _lastY;
                     _startingWidth = _lastWidth;
                     _startingHeight = _lastHeight;
                     break;
-                }
-                case "SetWindowBorder": {
+                /*case "SetWindowBorder": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
                     
                     Models.BloxstrapRPC.WindowBorderType? windowData;
@@ -241,7 +249,7 @@ namespace Bloxstrap.Integrations
                     }
                     
                     break;
-                }
+                }*/
                 case "SetWindowTransparency": {
                     Models.BloxstrapRPC.WindowTransparency? windowData;
 

@@ -27,6 +27,7 @@ namespace Bloxstrap.Models
         public bool UseDiscordRichPresence { get; set; } = true;
         public bool CanGameMoveWindow { get; set; } = true;
         public bool CanGameSetWindowTitle { get; set; } = true;
+        public int  WindowLogReadFPS { get; set; } = 60;
         public bool HideRPCButtons { get; set; } = true;
         public bool ShowServerDetails { get; set; } = false;
         public ObservableCollection<CustomIntegration> CustomIntegrations { get; set; } = new();

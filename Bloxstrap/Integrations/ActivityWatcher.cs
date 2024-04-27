@@ -1,4 +1,6 @@
-﻿namespace Bloxstrap.Integrations
+﻿using Bloxstrap.UI.ViewModels.Menu;
+
+namespace Bloxstrap.Integrations
 {
     public class ActivityWatcher : IDisposable
     {
@@ -42,6 +44,9 @@
 
         public bool IsDisposed = false;
 
+        public int delay = 1000;
+        public int windowLogDelay = 1000;
+
         public async void StartWatcher()
         {
             const string LOG_IDENT = "ActivityWatcher::StartWatcher";
@@ -57,13 +62,16 @@
             //
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
-              int delay = 1000;
+            delay = 1000;
+            windowLogDelay = 1000/Math.Min(
+                App.Settings.Prop.WindowLogReadFPS<1 ? 1 : 0,
+                int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int fpsUsed) ? fpsUsed : 60);
 
             if (App.Settings.Prop.PowerTools)
                 delay = 250;
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
-                delay = 1/60 * 1000; // 60fps (idea: maybe make game control the fps to run this to)
+                delay = windowLogDelay; //todo: make it not start like this
 
             string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
 

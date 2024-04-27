@@ -90,6 +90,12 @@ namespace Bloxstrap.UI.ViewModels.Menu
             set => App.Settings.Prop.CanGameMoveWindow = value;
         }
 
+        public int GameWindowLogFPSInterval
+        {
+            get => App.Settings.Prop.WindowLogReadFPS;
+            set => App.Settings.Prop.WindowLogReadFPS = value;
+        }
+
         public bool GameWindowTitleControlEnabled
         {
             get => App.Settings.Prop.CanGameSetWindowTitle;

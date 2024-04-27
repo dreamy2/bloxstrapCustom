@@ -942,6 +942,12 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   <data name="Menu.Integrations.GameWindowTitleControl.Description" xml:space="preserve">
     <value>Allows the game to set window title</value>
   </data>
+  <data name="Menu.Integrations.GameWindowLogFPS.Title" xml:space="preserve">
+    <value>Window Movement FPS</value>
+  </data>
+  <data name="Menu.Integrations.GameWindowLogFPS.Description" xml:space="preserve">
+    <value>Using a high number will cause lag! Use your monitor framerate or a lower value!</value>
+  </data>
   <data name="Menu.Integrations.ShowServerDetails.Description" xml:space="preserve">
     <value>When you join a game, you'll be notified of where your server's located. Won't show in fullscreen.</value>
   </data>

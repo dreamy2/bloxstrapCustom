@@ -2477,6 +2477,18 @@ namespace Bloxstrap.Resources {
                 return ResourceManager.GetString("Menu.Integrations.GameWindowTitleControl.Description", resourceCulture);
             }
         }
+
+        public static string Menu_Integrations_GameWindowLogFPS_Title {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.GameWindowLogFPS.Title", resourceCulture);
+            }
+        }
+
+        public static string Menu_Integrations_GameWindowLogFPS_Description {
+            get {
+                return ResourceManager.GetString("Menu.Integrations.GameWindowLogFPS.Description", resourceCulture);
+            }
+        }
         
         /// <summary>
         ///   Looks up a localized string similar to When you join a game, you&apos;ll be notified of where your server&apos;s located. Won&apos;t show in fullscreen..
