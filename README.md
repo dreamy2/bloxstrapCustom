@@ -1,4 +1,8 @@
+> [!CAUTION]
+> The only official places to download Bloxstrap are this GitHub repository and [bloxstrap.pizzaboxer.xyz](https://bloxstrap.pizzaboxer.xyz). Any other websites offering downloads or claiming to be us are not controlled by us.
+
 # <img src="https://github.com/pizzaboxer/bloxstrap/raw/main/Images/Bloxstrap.png" width="48"/> Bloxstrap
+
 [![License](https://img.shields.io/github/license/pizzaboxer/bloxstrap)](https://github.com/pizzaboxer/bloxstrap/blob/main/LICENSE)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pizzaboxer/bloxstrap/ci.yml?branch=main&label=builds)](https://github.com/pizzaboxer/bloxstrap/actions)
 [![Downloads](https://img.shields.io/github/downloads/pizzaboxer/bloxstrap/latest/total?color=981bfe)](https://github.com/pizzaboxer/bloxstrap/releases)
@@ -15,7 +19,7 @@
 
 EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
-```lua
+```luau
 -- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
 local next = next;
 local round = math.round;
@@ -84,17 +88,17 @@ To install a build:
 
     --> Already installed bloxstrap:
             Do Win+R and paste "%localappdata%\Bloxstrap" and run
-            Replace .exe file with new one downloaded
+            Replace .exe file with the new one downloaded
         
     --> Havent installed bloxstrap:
             Running the exe should install the fork not sure
-            If it doesnt work but it install do the "Already installed bloxstrap" steps
+            If it doesnt work but it installs, do the "Already installed bloxstrap" steps
 
 Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
 
-An open-source, feature-packed alternative bootstrapper for Roblox.
+This is a drop-in replacement for the standard Roblox bootstrapper, providing additional useful features and improvements. Nothing more, nothing less.
 
-This a drop-in replacement for the stock Roblox bootstrapper, working more or less how you'd expect it to, while providing additional useful features. This does not touch or modify the game client itself, it's just a launcher! So don't worry, there's practically no risk of being banned for using this.
+This does not touch or modify the game client itself, it's really just a launcher. So don't worry, there's [no risk of being banned](https://github.com/pizzaboxer/bloxstrap/wiki/Why-it%27s-not-reasonably-possible-for-you-to-be-banned-by-Bloxstrap) for using this.
 
 Running into a problem or need help with something? [Check out the Wiki](https://github.com/pizzaboxer/bloxstrap/wiki). If you can't find anything, or would like to suggest something, please [submit an issue](https://github.com/pizzaboxer/bloxstrap/issues) or report it in our [Discord server](https://discord.gg/nKjV3mGq6R).
  
@@ -118,30 +122,16 @@ Once installed, Bloxstrap is added to your Start Menu, where you can access the 
 Here's some of the features that Bloxstrap provides over the stock Roblox bootstrapper:
 
 * Persistent file modifications, includes re-adding the old death sound!
-* Support for easy and simple FastFlag editing, no need to mess around with a JSON file.
-* Painless and seamless support for Discord Rich Presence - no auth cookie needed!
+* Painless and seamless support for Discord Rich Presence
 * A customizable launcher look
 * Lets you see what region your current server is located in
-* Lets you have multiple Roblox game instances open simultaneously
 
 All the available features are browsable through the Bloxstrap menu.
-
-Bloxstrap also only runs whenever necessary, so it doesn't stay running in the background when you're not playing.
 
 ## Screenshots
 
 <p float="left">
-    <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/cd723d23-9bff-401e-aadf-deea265a3b1c" width="829" />
     <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/dcfd0cdf-1aae-45bb-849a-f7710ec63b28" width="435" />
     <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/e08cdf28-4f99-46b5-99f2-5c338aac86db" width="390" />
-    <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/a45755cb-39da-49df-b0ad-456a139e2efc" Width="593" />
     <img src="https://github.com/pizzaboxer/bloxstrap/assets/41478239/7ba35223-9115-401f-bbc1-d15e9c5fd79e" width="232" />
 <p>
-
-## Special thanks
-* [@MaximumADHD](https://github.com/MaximumADHD) - Initially inspiring the idea for Bloxstrap with [Roblox Studio Mod Manager](https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager).
-* [Multako](https://www.roblox.com/users/2485612194/profile) - Designing the Bloxstrap logo.
-* [@1011025m](https://github.com/1011025m) - Providing a method for disabling the Roblox desktop app.
-* taskmanager ([@Mantaraix](https://github.com/Mantaraix)) - Helping with designing the new menu look and layout.
-* [@Extravi](https://github.com/Extravi) - Allowing their presets to be bundled with Bloxstrap, and helping with improving UX.
-* [@axstin](https://github.com/axstin) - Making [rbxfpsunlocker](https://github.com/axstin/rbxfpsunlocker), which was used for Bloxstrap's FPS unlocking up until v2.2.0.

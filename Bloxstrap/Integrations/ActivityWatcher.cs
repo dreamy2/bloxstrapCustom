@@ -12,11 +12,14 @@
         private const string GameDisconnectedEntry = "[FLog::Network] Time to disconnect replication data:";
         private const string GameTeleportingEntry = "[FLog::SingleSurfaceApp] initiateTeleport";
         private const string GameMessageEntry = "[FLog::Output] [BloxstrapRPC]";
+        private const string GameLeavingEntry = "[FLog::SingleSurfaceApp] leaveUGCGameInternal";
 
         private const string GameJoiningEntryPattern = @"! Joining game '([0-9a-f\-]{36})' place ([0-9]+) at ([0-9\.]+)";
         private const string GameJoiningUDMUXPattern = @"UDMUX Address = ([0-9\.]+), Port = [0-9]+ \| RCC Server Address = ([0-9\.]+), Port = [0-9]+";
         private const string GameJoinedEntryPattern = @"serverId: ([0-9\.]+)\|[0-9]+";
+        private const string GameMessageEntryPattern = @"\[BloxstrapRPC\] (.*)";
 
+        private int _gameClientPid;
         private int _logEntriesRead = 0;
         private bool _teleportMarker = false;
         private bool _reservedTeleportMarker = false;
@@ -45,6 +48,11 @@
         public int delay = 1000;
         public int windowLogDelay = 1000;
 
+        public ActivityWatcher(int gameClientPid)
+        {
+            _gameClientPid = gameClientPid;
+        }
+
         public async void StartWatcher()
         {
             const string LOG_IDENT = "ActivityWatcher::StartWatcher";
@@ -69,7 +77,7 @@
                 delay = 250;
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
-                delay = windowLogDelay; //todo: make it not start like this
+                delay = windowLogDelay; //todo: make it not start like this (that's why its a public var)
 
             string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
 
@@ -124,7 +132,7 @@
             {
                 string? log = await sr.ReadLineAsync();
 
-                if (string.IsNullOrEmpty(log))
+                if (log is null)
                     logUpdatedEvent.WaitOne(delay);
                 else
                     ExamineLogEntry(log);
@@ -145,6 +153,14 @@
                 App.Logger.WriteLine(LOG_IDENT, $"Read {_logEntriesRead} log entries");
             else if (_logEntriesRead % 100 == 0)
                 App.Logger.WriteLine(LOG_IDENT, $"Read {_logEntriesRead} log entries");
+
+
+            if (App.Settings.Prop.UseDisableAppPatch && entry.Contains(GameLeavingEntry))
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Received desktop app exit, closing Roblox");
+                using var process = Process.GetProcessById(_gameClientPid);
+                process.CloseMainWindow();
+            }
 
             if (!ActivityInGame && ActivityPlaceId == 0)
             {
@@ -247,7 +263,16 @@
                 }
                 else if (entry.Contains(GameMessageEntry))
                 {
-                    string messagePlain = entry.Substring(entry.IndexOf(GameMessageEntry) + GameMessageEntry.Length + 1);
+                    var match = Regex.Match(entry, GameMessageEntryPattern);
+
+                    if (match.Groups.Count != 2)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, $"Failed to assert format for RPC message entry");
+                        App.Logger.WriteLine(LOG_IDENT, entry);
+                        return;
+                    }
+
+                    string messagePlain = match.Groups[1].Value;
                     Message? message;
 
                     try
@@ -272,7 +297,7 @@
                         return;
                     }
 
-                    // window stuff no longer logs
+                    // window stuff doesnt log
                     if (!message.Command.Contains("Window")) {
                         App.Logger.WriteLine(LOG_IDENT, $"Received message: '{messagePlain}'");
                     }
@@ -289,39 +314,35 @@
             if (GeolocationCache.ContainsKey(ActivityMachineAddress))
                 return GeolocationCache[ActivityMachineAddress];
 
-            string location, locationCity, locationRegion, locationCountry = "";
-
             try
             {
-                locationCity = await App.HttpClient.GetStringAsync($"https://ipinfo.io/{ActivityMachineAddress}/city");
-                locationRegion = await App.HttpClient.GetStringAsync($"https://ipinfo.io/{ActivityMachineAddress}/region");
-                locationCountry = await App.HttpClient.GetStringAsync($"https://ipinfo.io/{ActivityMachineAddress}/country");
+                string location = "";
+                var ipInfo = await Http.GetJson<IPInfoResponse>($"https://ipinfo.io/{ActivityMachineAddress}/json");
+
+                if (ipInfo is null)
+                    return $"? ({Resources.Strings.ActivityTracker_LookupFailed})";
+
+                if (string.IsNullOrEmpty(ipInfo.Country))
+                    location = "?";
+                else if (ipInfo.City == ipInfo.Region)
+                    location = $"{ipInfo.Region}, {ipInfo.Country}";
+                else
+                    location = $"{ipInfo.City}, {ipInfo.Region}, {ipInfo.Country}";
+
+                if (!ActivityInGame)
+                    return $"? ({Resources.Strings.ActivityTracker_LeftGame})";
+
+                GeolocationCache[ActivityMachineAddress] = location;
+
+                return location;
             }
             catch (Exception ex)
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Failed to get server location for {ActivityMachineAddress}");
                 App.Logger.WriteException(LOG_IDENT, ex);
 
-                return $"N/A ({Resources.Strings.ActivityTracker_LookupFailed})";
+                return $"? ({Resources.Strings.ActivityTracker_LookupFailed})";
             }
-
-            locationCity = locationCity.ReplaceLineEndings("");
-            locationRegion = locationRegion.ReplaceLineEndings("");
-            locationCountry = locationCountry.ReplaceLineEndings("");
-
-            if (string.IsNullOrEmpty(locationCountry))
-                location = "N/A";
-            else if (locationCity == locationRegion)
-                location = $"{locationRegion}, {locationCountry}";
-            else
-                location = $"{locationCity}, {locationRegion}, {locationCountry}";
-
-            if (!ActivityInGame)
-                return $"N/A ({Resources.Strings.ActivityTracker_LeftGame})";
-
-            GeolocationCache[ActivityMachineAddress] = location;
-
-            return location;
         }
 
         public void Dispose()

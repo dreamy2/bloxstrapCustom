@@ -11,25 +11,24 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Bloxstrap.UI.ViewModels.Dialogs;
 
 namespace Bloxstrap.UI.Elements.Dialogs
 {
     /// <summary>
-    /// Interaction logic for BulkAddFastFlagDialog.xaml
+    /// Interaction logic for LanguageSelectorDialog.xaml
     /// </summary>
-    public partial class BulkAddFastFlagDialog
+    public partial class LanguageSelectorDialog
     {
-        public MessageBoxResult Result = MessageBoxResult.Cancel;
-
-        public BulkAddFastFlagDialog()
+        public LanguageSelectorDialog()
         {
+            var viewModel = new LanguageSelectorViewModel();
+
+            DataContext = viewModel;
             InitializeComponent();
-        }
+            ApplyTheme();
 
-        private void OKButton_Click(object sender, RoutedEventArgs e)
-        {
-            Result = MessageBoxResult.OK;
-            Close();
+            viewModel.CloseRequestEvent += (_, _) => Close();
         }
     }
 }

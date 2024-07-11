@@ -107,10 +107,12 @@ namespace Bloxstrap
             Terminate();
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             const string LOG_IDENT = "App::OnStartup";
-            
+
+            Locale.Initialize();
+
             base.OnStartup(e);
 
             Logger.WriteLine(LOG_IDENT, $"Starting {ProjectName} v{Version}");
@@ -128,9 +130,6 @@ namespace Bloxstrap
 
             LaunchSettings = new LaunchSettings(e.Args);
 
-            HttpClient.Timeout = TimeSpan.FromSeconds(30);
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", ProjectRepository);
-            
             using (var checker = new InstallChecker())
             {
                 checker.Check();
@@ -142,17 +141,59 @@ namespace Bloxstrap
             // just in case the user decides to cancel the install
             if (!IsFirstRun)
             {
+                Settings.Load();
+                State.Load();
+                FastFlags.Load();
+
+                if (!Locale.SupportedLocales.ContainsKey(Settings.Prop.Locale))
+                {
+                    Settings.Prop.Locale = "nil";
+                    Settings.Save();
+                }
+
+                Locale.Set(Settings.Prop.Locale);
+            }
+
+            LaunchSettings.ParseRoblox();
+
+            HttpClient.Timeout = TimeSpan.FromSeconds(30);
+            HttpClient.DefaultRequestHeaders.Add("User-Agent", ProjectRepository);
+
+            // TEMPORARY FILL-IN FOR NEW FUNCTIONALITY
+            // REMOVE WHEN LARGER REFACTORING IS DONE
+            var connectionResult = await RobloxDeployment.InitializeConnectivity();
+
+            if (connectionResult is not null)
+            {
+                Logger.WriteException(LOG_IDENT, connectionResult);
+
+                Frontend.ShowConnectivityDialog(
+                    Bloxstrap.Resources.Strings.Dialog_Connectivity_UnableToConnect, 
+                    Bloxstrap.Resources.Strings.Bootstrapper_Connectivity_Preventing, 
+                    connectionResult
+                );
+
+                return;
+            }
+
+            if (LaunchSettings.IsUninstall && IsFirstRun)
+            {
+                Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Bootstrapper_FirstRunUninstall, MessageBoxImage.Error);
+                Terminate(ErrorCode.ERROR_INVALID_FUNCTION);
+                return;
+            }
+
+            // we shouldn't save settings on the first run until the first installation is finished,
+            // just in case the user decides to cancel the install
+            if (!IsFirstRun)
+            {
                 Logger.Initialize(LaunchSettings.IsUninstall);
 
-                if (!Logger.Initialized)
+                if (!Logger.Initialized && !Logger.NoWriteMode)
                 {
                     Logger.WriteLine(LOG_IDENT, "Possible duplicate launch detected, terminating.");
                     Terminate();
                 }
-
-                Settings.Load();
-                State.Load();
-                FastFlags.Load();
             }
 
             if (!LaunchSettings.IsUninstall && !LaunchSettings.IsMenuLaunch)
@@ -165,7 +206,7 @@ namespace Bloxstrap
 
             if (LaunchSettings.IsMenuLaunch)
             {
-                Process? menuProcess = Process.GetProcesses().Where(x => x.MainWindowTitle == $"{ProjectName} Menu").FirstOrDefault();
+                Process? menuProcess = Utilities.GetProcessesSafe().Where(x => x.MainWindowTitle == $"{ProjectName} Menu").FirstOrDefault();
 
                 if (menuProcess is not null)
                 {
@@ -175,13 +216,8 @@ namespace Bloxstrap
                 }
                 else
                 {
-                    if (Process.GetProcessesByName(ProjectName).Length > 1 && !LaunchSettings.IsQuiet)
-                        Frontend.ShowMessageBox(
-                            Bloxstrap.Resources.Strings.Menu_AlreadyRunning, 
-                            MessageBoxImage.Information
-                        );
-
-                    Frontend.ShowMenu();
+                    bool showAlreadyRunningWarning = Process.GetProcessesByName(ProjectName).Length > 1 && !LaunchSettings.IsQuiet;
+                    Frontend.ShowMenu(showAlreadyRunningWarning);
                 }
 
                 StartupFinished();
@@ -190,6 +226,21 @@ namespace Bloxstrap
 
             if (!IsFirstRun)
                 ShouldSaveConfigs = true;
+            
+            if (Settings.Prop.ConfirmLaunches && Mutex.TryOpenExisting("ROBLOX_singletonMutex", out var _))
+            {
+                // this currently doesn't work very well since it relies on checking the existence of the singleton mutex
+                // which often hangs around for a few seconds after the window closes
+                // it would be better to have this rely on the activity tracker when we implement IPC in the planned refactoring
+
+                var result = Frontend.ShowMessageBox(Bloxstrap.Resources.Strings.Bootstrapper_ConfirmLaunch, MessageBoxImage.Warning, MessageBoxButton.YesNo);
+
+                if (result != MessageBoxResult.Yes)
+                {
+                    StartupFinished();
+                    return;
+                }
+            }
 
             // start bootstrapper and show the bootstrapper modal if we're not running silently
             Logger.WriteLine(LOG_IDENT, "Initializing bootstrapper");
@@ -202,28 +253,6 @@ namespace Bloxstrap
                 dialog = Settings.Prop.BootstrapperStyle.GetNew();
                 bootstrapper.Dialog = dialog;
                 dialog.Bootstrapper = bootstrapper;
-            }
-
-            // handle roblox singleton mutex for multi-instance launching
-            // note we're handling it here in the main thread and NOT in the
-            // bootstrapper as handling mutexes in async contexts suuuuuucks
-
-            Mutex? singletonMutex = null;
-
-            if (Settings.Prop.MultiInstanceLaunching && LaunchSettings.RobloxLaunchMode == LaunchMode.Player)
-            {
-                Logger.WriteLine(LOG_IDENT, "Creating singleton mutex");
-
-                try
-                {
-                    Mutex.OpenExisting("ROBLOX_singletonMutex");
-                    Logger.WriteLine(LOG_IDENT, "Warning - singleton mutex already exists!");
-                }
-                catch
-                {
-                    // create the singleton mutex before the game client does
-                    singletonMutex = new Mutex(true, "ROBLOX_singletonMutex");
-                }
             }
 
             Task bootstrapperTask = Task.Run(async () => await bootstrapper.Run()).ContinueWith(t =>
@@ -260,16 +289,6 @@ namespace Bloxstrap
             Logger.WriteLine(LOG_IDENT, "Waiting for bootstrapper task to finish");
 
             bootstrapperTask.Wait();
-
-            if (singletonMutex is not null)
-            {
-                Logger.WriteLine(LOG_IDENT, "We have singleton mutex ownership! Running in background until all Roblox processes are closed");
-
-                // we've got ownership of the roblox singleton mutex!
-                // if we stop running, everything will screw up once any more roblox instances launched
-                while (Process.GetProcessesByName("RobloxPlayerBeta").Any())
-                    Thread.Sleep(5000);
-            }
 
             StartupFinished();
         }

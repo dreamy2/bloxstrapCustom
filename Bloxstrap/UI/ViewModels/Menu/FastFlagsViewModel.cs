@@ -23,12 +23,27 @@ namespace Bloxstrap.UI.ViewModels.Menu
         private void OpenFastFlagEditor()
         {
             if (Window.GetWindow(_page) is INavigationWindow window)
-                window.Navigate(typeof(FastFlagEditorPage));
+            {
+                if (App.State.Prop.ShowFFlagEditorWarning)
+                    window.Navigate(typeof(FastFlagEditorWarningPage));
+                else
+                    window.Navigate(typeof(FastFlagEditorPage));
+            }
         }
 
         public ICommand OpenFastFlagEditorCommand => new RelayCommand(OpenFastFlagEditor);
 
-        public Visibility ShowDebugFlags => App.Settings.Prop.PowerTools ? Visibility.Visible : Visibility.Collapsed;
+#if DEBUG
+        public Visibility ShowDebugFlags => Visibility.Visible;
+#else
+        public Visibility ShowDebugFlags => Visibility.Collapsed;
+#endif
+
+        public bool UseFastFlagManager
+        {
+            get => App.Settings.Prop.UseFastFlagManager;
+            set => App.Settings.Prop.UseFastFlagManager = value;
+        }
 
         public bool HttpRequestLogging
         {
@@ -55,8 +70,16 @@ namespace Bloxstrap.UI.ViewModels.Menu
 
         public int FramerateLimit
         {
-            get => int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int x) ? x : 60;
-            set => App.FastFlags.SetPreset("Rendering.Framerate", value);
+            get => int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int x) ? x : 0;
+            set => App.FastFlags.SetPreset("Rendering.Framerate", value == 0 ? null : value);
+        }
+
+        public IReadOnlyDictionary<MSAAMode, string?> MSAALevels => FastFlagManager.MSAAModes;
+
+        public MSAAMode SelectedMSAALevel
+        {
+            get => MSAALevels.FirstOrDefault(x => x.Value == App.FastFlags.GetPreset("Rendering.MSAA")).Key;
+            set => App.FastFlags.SetPreset("Rendering.MSAA", MSAALevels[value]);
         }
 
         public IReadOnlyDictionary<RenderingMode, string> RenderingModes => FastFlagManager.RenderingModes;
@@ -81,23 +104,6 @@ namespace Bloxstrap.UI.ViewModels.Menu
         {
             get => App.FastFlags.GetPreset("UI.Menu.GraphicsSlider") == "True";
             set => App.FastFlags.SetPreset("UI.Menu.GraphicsSlider", value ? "True" : null);
-        }
-
-        public IReadOnlyDictionary<MaterialVersion, string> MaterialVersions => FastFlagManager.MaterialVersions;
-
-        public MaterialVersion SelectedMaterialVersion
-        {
-            get
-            {
-                MaterialVersion oldMaterials = App.FastFlags.GetPresetEnum(MaterialVersions, "Rendering.Materials", FastFlagManager.OldTexturesFlagValue);
-
-                if (oldMaterials != MaterialVersion.Default)
-                    return oldMaterials;
-
-                return App.FastFlags.GetPresetEnum(MaterialVersions, "Rendering.Materials", FastFlagManager.NewTexturesFlagValue);
-            }
-
-            set => App.FastFlags.SetPresetEnum("Rendering.Materials", MaterialVersions[value], MaterialVersions[value] == "NewTexturePack" ? FastFlagManager.OldTexturesFlagValue : FastFlagManager.NewTexturesFlagValue);
         }
 
         public IReadOnlyDictionary<InGameMenuVersion, Dictionary<string, string?>> IGMenuVersions => FastFlagManager.IGMenuVersions;
@@ -142,10 +148,59 @@ namespace Bloxstrap.UI.ViewModels.Menu
             set => App.FastFlags.SetPresetEnum("Rendering.Lighting", LightingModes[value], "True");
         }
 
+        public bool FullscreenTitlebarDisabled
+        {
+            get => int.TryParse(App.FastFlags.GetPreset("UI.FullscreenTitlebarDelay"), out int x) && x > 5000;
+            set => App.FastFlags.SetPreset("UI.FullscreenTitlebarDelay", value ? "3600000" : null);
+        }
+
         public bool GuiHidingEnabled
         {
             get => App.FastFlags.GetPreset("UI.Hide") == "32380007";
             set => App.FastFlags.SetPreset("UI.Hide", value ? "32380007" : null);
+        }
+
+        public IReadOnlyDictionary<TextureQuality, string?> TextureQualities => FastFlagManager.TextureQualityLevels;
+
+        public TextureQuality SelectedTextureQuality
+        {
+            get => TextureQualities.Where(x => x.Value == App.FastFlags.GetPreset("Rendering.TextureQuality.Level")).FirstOrDefault().Key;
+            set
+            {
+                if (value == TextureQuality.Default)
+                {
+                    App.FastFlags.SetPresetEnum("Rendering", "TextureQuality", null);
+                }
+                else
+                {
+                    App.FastFlags.SetPreset("Rendering.TextureQuality.OverrideEnabled", "True");
+                    App.FastFlags.SetPreset("Rendering.TextureQuality.Level", TextureQualities[value]);
+                }
+            }
+        }
+
+        public bool DisablePostFX
+        {
+            get => App.FastFlags.GetPreset("Rendering.DisablePostFX") == "True";
+            set => App.FastFlags.SetPreset("Rendering.DisablePostFX", value ? "True" : null);
+        }
+
+        public bool DisablePlayerShadows
+        {
+            get => App.FastFlags.GetPreset("Rendering.ShadowIntensity") == "0";
+            set => App.FastFlags.SetPreset("Rendering.ShadowIntensity", value ? "0" : null);
+        }
+
+        public int? FontSize
+        {
+            get => int.TryParse(App.FastFlags.GetPreset("UI.FontSize"), out int x) ? x : 1;
+            set => App.FastFlags.SetPreset("UI.FontSize", value == 1 ? null : value);
+        }
+
+        public bool DisableTerrainTextures
+        {
+            get => App.FastFlags.GetPreset("Rendering.TerrainTextureQuality") == "0";
+            set => App.FastFlags.SetPreset("Rendering.TerrainTextureQuality", value ? "0" : null);
         }
     }
 }

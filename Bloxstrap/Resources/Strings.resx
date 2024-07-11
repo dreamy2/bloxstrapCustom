@@ -126,9 +126,8 @@
   <data name="Bootstrapper.AutoUpdateFailed" xml:space="preserve">
     <value>Bloxstrap was unable to auto-update to {0}. Please update it manually by downloading and running the latest release from the GitHub page.</value>
   </data>
-  <data name="Bootstrapper.ChannelOutOfDate" xml:space="preserve">
-    <value>The channel you're currently on ({0}) is out of date, and appears to no longer be receiving updates.
-Would you like to switch to the default channel ({1})?</value>
+  <data name="Bootstrapper.ConfirmLaunch" xml:space="preserve">
+    <value>Roblox is currently running, and launching another instance will close it. Are you sure you want to continue launching?</value>
   </data>
   <data name="Bootstrapper.Connectivity.Preventing" xml:space="preserve">
     <value>It's possible that something is preventing Bloxstrap from connecting to the internet. Please check and try again.</value>
@@ -139,8 +138,11 @@ Would you like to switch to the default channel ({1})?</value>
   <data name="Bootstrapper.Connectivity.TimedOut" xml:space="preserve">
     <value>Bloxstrap timed out when trying to connect to three different Roblox deployment mirrors, indicating a poor internet connection. Please try again later.</value>
   </data>
-  <data name="Bootstrapper.DeeplinkTempEnabled" xml:space="preserve">
-    <value>Roblox was launched via a deeplink, however the desktop app is required for deeplink launching to work. Because you've opted to disable the desktop app, it will temporarily be re-enabled for this launch only.</value>
+  <data name="Bootstrapper.EmojiPresetFetchFailed" xml:space="preserve">
+    <value>Could not apply the {0} emoji mod preset because of a network error. To try again, please reconfigure the option in the Bloxstrap Menu.</value>
+  </data>
+  <data name="Bootstrapper.FirstRunUninstall" xml:space="preserve">
+    <value>You must first install Bloxstrap before uninstalling.</value>
   </data>
   <data name="Bootstrapper.HyperionUpdateInfo" xml:space="preserve">
     <value>Roblox has now finished rolling out the new game client update, featuring 64-bit support and the Hyperion anticheat. ReShade does not work with this update, and so it has now been disabled and removed from Bloxstrap.
@@ -200,6 +202,9 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Bootstrapper.WMFNotFound" xml:space="preserve">
     <value>Roblox requires the use of Windows Media Foundation components. You appear to be missing them, likely because you are using an N edition of Windows. Please install them first, and then launch Roblox.</value>
   </data>
+  <data name="Common.AddSingle" xml:space="preserve">
+    <value>Add single</value>
+  </data>
   <data name="Common.Browse" xml:space="preserve">
     <value>Browse</value>
   </data>
@@ -251,6 +256,9 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Common.Value" xml:space="preserve">
     <value>Value</value>
   </data>
+  <data name="Common.Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
   <data name="Common.Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
@@ -263,23 +271,8 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="ContextMenu.CopyDeeplinkInvite" xml:space="preserve">
     <value>Copy invite deeplink</value>
   </data>
-  <data name="ContextMenu.LogTracer.KeepOnTop" xml:space="preserve">
-    <value>Keep on top</value>
-  </data>
-  <data name="ContextMenu.LogTracer.ScrollToEnd" xml:space="preserve">
-    <value>Scroll to end</value>
-  </data>
-  <data name="ContextMenu.LogTracer.TextWrapping" xml:space="preserve">
-    <value>Text wrapping</value>
-  </data>
-  <data name="ContextMenu.LogTracer.Title" xml:space="preserve">
-    <value>Log tracer</value>
-  </data>
-  <data name="ContextMenu.LogTracer.TracingFormat" xml:space="preserve">
-    <value>Tracing {0}</value>
-  </data>
-  <data name="ContextMenu.OpenLogTracer" xml:space="preserve">
-    <value>Open log tracer</value>
+  <data name="ContextMenu.OpenLogFile" xml:space="preserve">
+    <value>Open log file</value>
   </data>
   <data name="ContextMenu.SeeServerDetails" xml:space="preserve">
     <value>See server details</value>
@@ -296,23 +289,22 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="ContextMenu.ServerInformation.Location" xml:space="preserve">
     <value>Location</value>
   </data>
+  <data name="ContextMenu.ServerInformation.Notification.Text" xml:space="preserve">
+    <value>Located at {0}
+Click for more information</value>
+  </data>
+  <data name="ContextMenu.ServerInformation.Notification.Title" xml:space="preserve">
+    <value>Connected to {0} server</value>
+    <comment>Enums.ServerType fills in {0} and is dynamically converted to lowercase when inserted here</comment>
+  </data>
   <data name="ContextMenu.ServerInformation.Title" xml:space="preserve">
     <value>Server information</value>
   </data>
   <data name="ContextMenu.ServerInformation.Type" xml:space="preserve">
     <value>Type</value>
   </data>
-  <data name="ContextMenu.ServerInformation.TypeFormat" xml:space="preserve">
-    <value>{0} server</value>
-  </data>
-  <data name="ContextMenu.ServerInformation.UdmuxProxied" xml:space="preserve">
-    <value>UDMUX proxied</value>
-  </data>
   <data name="Dialog.AddFastFlag.Title" xml:space="preserve">
-    <value>Add FastFlag</value>
-  </data>
-  <data name="Dialog.BulkAddFastFlag.Paste" xml:space="preserve">
-    <value>Paste in your JSON here...</value>
+    <value>Add Fast Flag</value>
   </data>
   <data name="Dialog.Connectivity.MoreInfo" xml:space="preserve">
     <value>More information:</value>
@@ -321,7 +313,7 @@ Your ReShade configuration files will still be saved, and you can locate them by
     <value>Connectivity error</value>
   </data>
   <data name="Dialog.Connectivity.UnableToConnect" xml:space="preserve">
-    <value>Bloxstrap is unable to connect to {0}</value>
+    <value>Bloxstrap is unable to connect to Roblox</value>
   </data>
   <data name="Dialog.Exception.CopyLogContents" xml:space="preserve">
     <value>Copy log contents</value>
@@ -330,39 +322,14 @@ Your ReShade configuration files will still be saved, and you can locate them by
     <value>An exception occurred while running Bloxstrap</value>
   </data>
   <data name="Dialog.Exception.Info.2" xml:space="preserve">
-    <value>Please report this exception through a GitHub issue or in our Discord chat, along with a copy of the log file that was created.</value>
-  </data>
-  <data name="Dialog.Exception.SubmitReport" xml:space="preserve">
-    <value>Submit report...</value>
-  </data>
-  <data name="Dialog.Exception.SubmitReportDiscord" xml:space="preserve">
-    <value>Submit report via Discord</value>
-  </data>
-  <data name="Dialog.Exception.SubmitReportGithub" xml:space="preserve">
-    <value>Submit report via GitHub</value>
+    <value>Check the [Bloxstrap Wiki]({0}) first to see if this problem has already been addressed with a fix.
+
+If not, then please report this exception through a [GitHub issue]({1}) along with a copy of the log file that was created.</value>
   </data>
   <data name="Dialog.Exception.Title" xml:space="preserve">
     <value>Bloxstrap Exception</value>
   </data>
-  <data name="Enums.BootstrapperIcon.Icon2008" xml:space="preserve">
-    <value>2008</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.Icon2011" xml:space="preserve">
-    <value>2011</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.Icon2017" xml:space="preserve">
-    <value>2017</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.Icon2019" xml:space="preserve">
-    <value>2019</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.Icon2022" xml:space="preserve">
-    <value>2022</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.IconBloxstrap" xml:space="preserve">
-    <value>Bloxstrap</value>
-  </data>
-  <data name="Enums.BootstrapperIcon.IconCustom" xml:space="preserve">
+  <data name="Common.Custom" xml:space="preserve">
     <value>Custom</value>
   </data>
   <data name="Enums.BootstrapperIcon.IconEarly2015" xml:space="preserve">
@@ -374,8 +341,11 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Enums.BootstrapperStyle.ByfronDialog" xml:space="preserve">
     <value>Fake Byfron (2023)</value>
   </data>
-  <data name="Enums.BootstrapperStyle.FluentDialog" xml:space="preserve">
-    <value>Fluent</value>
+  <data name="Enums.BootstrapperStyle.ClassicFluentDialog" xml:space="preserve">
+    <value>Bloxstrap (Classic)</value>
+  </data>
+  <data name="Enums.BootstrapperStyle.FluentAeroDialog" xml:space="preserve">
+    <value>Bloxstrap (Glass)</value>
   </data>
   <data name="Enums.BootstrapperStyle.LegacyDialog2008" xml:space="preserve">
     <value>Legacy (2008 - 2011)</value>
@@ -384,28 +354,10 @@ Your ReShade configuration files will still be saved, and you can locate them by
     <value>Legacy (2011 - 2014)</value>
   </data>
   <data name="Enums.BootstrapperStyle.ProgressDialog" xml:space="preserve">
-    <value>Progress (~2014)</value>
-  </data>
-  <data name="Enums.BootstrapperStyle.ProgressFluentAeroDialog" xml:space="preserve">
-    <value>Fluent Progress (Aero)</value>
-  </data>
-  <data name="Enums.BootstrapperStyle.ProgressFluentDialog" xml:space="preserve">
-    <value>Fluent Progress</value>
+    <value>Roblox (~2014)</value>
   </data>
   <data name="Enums.BootstrapperStyle.VistaDialog" xml:space="preserve">
     <value>Vista (2008 - 2011)</value>
-  </data>
-  <data name="Enums.ChannelChangeMode.Automatic" xml:space="preserve">
-    <value>Change automatically</value>
-  </data>
-  <data name="Enums.ChannelChangeMode.Ignore" xml:space="preserve">
-    <value>Never change</value>
-  </data>
-  <data name="Enums.ChannelChangeMode.Prompt" xml:space="preserve">
-    <value>Always prompt</value>
-  </data>
-  <data name="Enums.CursorType.Default" xml:space="preserve">
-    <value>Default</value>
   </data>
   <data name="Enums.CursorType.From2006" xml:space="preserve">
     <value>2006 (Cartoony)</value>
@@ -428,17 +380,14 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Enums.EmojiType.Windows8" xml:space="preserve">
     <value>Windows 8</value>
   </data>
-  <data name="Enums.FlagPresets.InGameMenuVersion.Default" xml:space="preserve">
-    <value>Default</value>
-  </data>
   <data name="Enums.FlagPresets.InGameMenuVersion.V1" xml:space="preserve">
-    <value>Version 1 (2015)</value>
+    <value>2015 (V1)</value>
   </data>
   <data name="Enums.FlagPresets.InGameMenuVersion.V2" xml:space="preserve">
-    <value>Version 2 (2020)</value>
+    <value>2022 (V2)</value>
   </data>
   <data name="Enums.FlagPresets.InGameMenuVersion.V4" xml:space="preserve">
-    <value>Version 4 (2023)</value>
+    <value>2023 (V4)</value>
   </data>
   <data name="Enums.FlagPresets.LightingMode.Default" xml:space="preserve">
     <value>Chosen by game</value>
@@ -452,44 +401,11 @@ Your ReShade configuration files will still be saved, and you can locate them by
   <data name="Enums.FlagPresets.LightingMode.Voxel" xml:space="preserve">
     <value>Voxel (Phase 1)</value>
   </data>
-  <data name="Enums.FlagPresets.MaterialVersion.Default" xml:space="preserve">
-    <value>Chosen by game</value>
-  </data>
-  <data name="Enums.FlagPresets.MaterialVersion.New" xml:space="preserve">
-    <value>New (2022)</value>
-  </data>
-  <data name="Enums.FlagPresets.MaterialVersion.Old" xml:space="preserve">
-    <value>Old (Pre-2022)</value>
-  </data>
-  <data name="Enums.FlagPresets.MSAAMode.Default" xml:space="preserve">
-    <value>Automatic</value>
-  </data>
-  <data name="Enums.FlagPresets.MSAAMode.x1" xml:space="preserve">
-    <value>1x MSAA</value>
-  </data>
-  <data name="Enums.FlagPresets.MSAAMode.x2" xml:space="preserve">
-    <value>2x MSAA</value>
-  </data>
-  <data name="Enums.FlagPresets.MSAAMode.x4" xml:space="preserve">
-    <value>4x MSAA</value>
-  </data>
-  <data name="Enums.FlagPresets.MSAAMode.x8" xml:space="preserve">
-    <value>8x MSAA</value>
-  </data>
   <data name="Enums.FlagPresets.RenderingMode.D3D10" xml:space="preserve">
-    <value>D3D10</value>
+    <value>Direct3D 10</value>
   </data>
   <data name="Enums.FlagPresets.RenderingMode.D3D11" xml:space="preserve">
-    <value>D3D11</value>
-  </data>
-  <data name="Enums.FlagPresets.RenderingMode.Default" xml:space="preserve">
-    <value>Automatic</value>
-  </data>
-  <data name="Enums.FlagPresets.RenderingMode.OpenGL" xml:space="preserve">
-    <value>OpenGL</value>
-  </data>
-  <data name="Enums.FlagPresets.RenderingMode.Vulkan" xml:space="preserve">
-    <value>Vulkan</value>
+    <value>Direct3D 11</value>
   </data>
   <data name="Enums.ServerType.Private" xml:space="preserve">
     <value>Private</value>
@@ -502,9 +418,6 @@ Your ReShade configuration files will still be saved, and you can locate them by
   </data>
   <data name="Enums.Theme.Dark" xml:space="preserve">
     <value>Dark</value>
-  </data>
-  <data name="Enums.Theme.Default" xml:space="preserve">
-    <value>System Default</value>
   </data>
   <data name="Enums.Theme.Light" xml:space="preserve">
     <value>Light</value>
@@ -530,21 +443,6 @@ While Bloxstrap will continue to work, it's recommended that you change the driv
     <value>The version of Bloxstrap you've launched is different to the version you currently have installed.
 Would you like to upgrade your currently installed version?</value>
   </data>
-  <data name="Menu.About.BuildCommitHash" xml:space="preserve">
-    <value>Commit Hash</value>
-  </data>
-  <data name="Menu.About.BuildInformation" xml:space="preserve">
-    <value>Build Information</value>
-  </data>
-  <data name="Menu.About.BuildMachine" xml:space="preserve">
-    <value>Machine</value>
-  </data>
-  <data name="Menu.About.BuildRef" xml:space="preserve">
-    <value>Commit Ref</value>
-  </data>
-  <data name="Menu.About.BuildTimestamp" xml:space="preserve">
-    <value>Timestamp</value>
-  </data>
   <data name="Menu.About.Contributors" xml:space="preserve">
     <value>Contributors</value>
   </data>
@@ -557,14 +455,14 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.About.Contributors.FeatureIdeas" xml:space="preserve">
     <value>Feature Ideas</value>
   </data>
+  <data name="Menu.About.Contributors.SpecialThanks" xml:space="preserve">
+    <value>Special Thanks</value>
+  </data>
   <data name="Menu.About.Contributors.Translations" xml:space="preserve">
     <value>Translations</value>
   </data>
-  <data name="Menu.About.Description.1" xml:space="preserve">
-    <value>An open-source, feature-packed alternative bootstrapper for Roblox</value>
-  </data>
-  <data name="Menu.About.Description.2" xml:space="preserve">
-    <value>Developed by pizzaboxer - if you like this, please consider leaving a star on GitHub!</value>
+  <data name="Menu.About.Description" xml:space="preserve">
+    <value>An alternative bootstrapper for Roblox with a bunch of extra features.</value>
   </data>
   <data name="Menu.About.DiscordServer" xml:space="preserve">
     <value>Discord server</value>
@@ -578,14 +476,17 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.About.Licenses" xml:space="preserve">
     <value>Licenses</value>
   </data>
+  <data name="Menu.About.Licenses.BSD2" xml:space="preserve">
+    <value>BSD 2-Clause License</value>
+  </data>
+  <data name="Menu.About.Licenses.MIT" xml:space="preserve">
+    <value>MIT License</value>
+  </data>
   <data name="Menu.About.ReportIssue" xml:space="preserve">
     <value>Report an issue</value>
   </data>
   <data name="Menu.About.Title" xml:space="preserve">
     <value>About</value>
-  </data>
-  <data name="Menu.About.UnreleasedVersion" xml:space="preserve">
-    <value>Using an unreleased version, I see?</value>
   </data>
   <data name="Menu.About.Version" xml:space="preserve">
     <value>Version {0}</value>
@@ -593,8 +494,11 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.AllFiles" xml:space="preserve">
     <value>All files</value>
   </data>
-  <data name="Menu.AlreadyRunning" xml:space="preserve">
-    <value>Bloxstrap is currently running, likely as a background Roblox process. Please note that not all your changes will immediately apply until you close all currently open Roblox instances.</value>
+  <data name="Menu.AlreadyRunning.Caption" xml:space="preserve">
+    <value>Please note that not all your changes will immediately apply until you close all currently open Roblox instances.</value>
+  </data>
+  <data name="Menu.AlreadyRunning.Title" xml:space="preserve">
+    <value>Bloxstrap is already running</value>
   </data>
   <data name="Menu.Appearance.Bootstrapper.Description" xml:space="preserve">
     <value>You can make it look different, retro, or even just like Roblox.</value>
@@ -623,9 +527,6 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.Appearance.Description" xml:space="preserve">
     <value>Configure how Bloxstrap should look.</value>
   </data>
-  <data name="Menu.Appearance.Global.Theme.Description" xml:space="preserve">
-    <value>Dark theme does not apply to Legacy or Vista styles.</value>
-  </data>
   <data name="Menu.Appearance.Global.Theme.Title" xml:space="preserve">
     <value>Global Theme</value>
   </data>
@@ -647,44 +548,17 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.Appearance.Title" xml:space="preserve">
     <value>Appearance</value>
   </data>
-  <data name="Menu.Behaviour.AutoChannelChange.Description" xml:space="preserve">
-    <value>Roblox or Bloxstrap may try to change your preferred channel.</value>
-  </data>
-  <data name="Menu.Behaviour.AutoChannelChange.Title" xml:space="preserve">
-    <value>Automatic channel change action</value>
-  </data>
   <data name="Menu.Behaviour.AutoUpdate.Description" xml:space="preserve">
     <value>Bloxstrap will automatically check and update itself when launching Roblox.</value>
   </data>
   <data name="Menu.Behaviour.AutoUpdate.Title" xml:space="preserve">
     <value>Automatically update Bloxstrap</value>
   </data>
-  <data name="Menu.Behaviour.Channel.Deployed" xml:space="preserve">
-    <value>Deployed</value>
+  <data name="Menu.Behaviour.ConfirmLaunches.Description" xml:space="preserve">
+    <value>Prevent against closures of your existing game from accidentally launching another one.</value>
   </data>
-  <data name="Menu.Behaviour.Channel.Description" xml:space="preserve">
-    <value>Choose which deployment channel Roblox should be downloaded from.</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.DoesNotExist" xml:space="preserve">
-    <value>The specified channel name does not exist.</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.FetchFailed" xml:space="preserve">
-    <value>Failed to fetch information!</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.Fetching" xml:space="preserve">
-    <value>Fetching latest deploy info, please wait...</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.Outdated" xml:space="preserve">
-    <value>This channel is out of date, and is likely no longer being updated. Please use another channel.</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.Title" xml:space="preserve">
-    <value>Channel</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.Version" xml:space="preserve">
-    <value>Version</value>
-  </data>
-  <data name="Menu.Behaviour.Channel.VersionGuid" xml:space="preserve">
-    <value>Version GUID</value>
+  <data name="Menu.Behaviour.ConfirmLaunches.Title" xml:space="preserve">
+    <value>Prompt to confirm when launching another Roblox instance</value>
   </data>
   <data name="Menu.Behaviour.CreateDesktopIcon.Description" xml:space="preserve">
     <value>Bloxstrap will place an icon on the desktop that launches Roblox the next time it launches.</value>
@@ -707,14 +581,52 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.FastFlagEditor.AddNew" xml:space="preserve">
     <value>Add new</value>
   </data>
+  <data name="Menu.FastFlagEditor.AlreadyExists" xml:space="preserve">
+    <value>An entry for this flag name already exists.</value>
+  </data>
   <data name="Menu.FastFlagEditor.Back" xml:space="preserve">
     <value>Back</value>
+  </data>
+  <data name="Menu.FastFlagEditor.BannerText" xml:space="preserve">
+    <value>Misusing this can lead to instability or unexpected things happening.</value>
+  </data>
+  <data name="Menu.FastFlagEditor.BannerTitle" xml:space="preserve">
+    <value>Use with caution.</value>
+  </data>
+  <data name="Menu.FastFlagEditor.ConflictingImport" xml:space="preserve">
+    <value>Some of the flags you are attempting to import already have set values. Would you like to overwrite their current values with the ones defined in the import?
+
+There are {0} conflicting flag definitions:
+{1}</value>
   </data>
   <data name="Menu.FastFlagEditor.DeleteSelected" xml:space="preserve">
     <value>Delete selected</value>
   </data>
   <data name="Menu.FastFlagEditor.Description" xml:space="preserve">
-    <value>Manage your own FastFlags. Double click a column to edit.</value>
+    <value>Manage your own Fast Flags. Double click a column to edit.</value>
+  </data>
+  <data name="Menu.FastFlagEditor.ExportJson" xml:space="preserve">
+    <value>Export JSON</value>
+  </data>
+  <data name="Menu.FastFlagEditor.InvalidCharacter" xml:space="preserve">
+    <value>The entry for '{0}' is not valid as the name can only contain letters, numbers, and underscores</value>
+  </data>
+  <data name="Menu.FastFlagEditor.InvalidJSON" xml:space="preserve">
+    <value>The JSON you've entered does not appear to be valid. Please double check it and try again.
+
+More information:
+{0}</value>
+  </data>
+  <data name="Menu.FastFlagEditor.InvalidPrefix" xml:space="preserve">
+    <value>The entry for '{0}' is not valid as the name must start with FFlag, DFInt, etc</value>
+  </data>
+  <data name="Menu.FastFlagEditor.JsonCopiedToClipboard" xml:space="preserve">
+    <value>Copied to clipboard.</value>
+  </data>
+  <data name="Menu.FastFlagEditor.LargeConfig" xml:space="preserve">
+    <value>You appear to be importing a very large configuration. You should only be importing configurations that you fully understand. Do NOT blindly paste in configurations made by other people. If you continue, you will very likely end up with stability issues and encounter unexpected changes.
+
+Are you sure you want to continue?</value>
   </data>
   <data name="Menu.FastFlagEditor.Search" xml:space="preserve">
     <value>Search</value>
@@ -725,63 +637,51 @@ Would you like to upgrade your currently installed version?</value>
   <data name="Menu.FastFlagEditor.Title" xml:space="preserve">
     <value>Fast Flag Editor</value>
   </data>
+  <data name="Menu.FastFlagEditor.Warning.Back" xml:space="preserve">
+    <value>Go back</value>
+  </data>
+  <data name="Menu.FastFlagEditor.Warning.Continue" xml:space="preserve">
+    <value>I know what I'm doing</value>
+  </data>
+  <data name="Menu.FastFlagEditor.Warning.Header" xml:space="preserve">
+    <value>Do you know what you are doing?</value>
+  </data>
+  <data name="Menu.FastFlagEditor.Warning.Text" xml:space="preserve">
+    <value>Fast Flags are extremely powerful, being that they are intended to only be used by Roblox engineers. While they can be very useful, manually configuring them can cause serious issues with stability and functionality. Do NOT use the editor if you are unsure of what you are doing.
+
+Do NOT use this to import large "flag lists" made by other people that promise to improve performance or such. They are subject to the aforementioned issues, and they will cause problems for you since you will not be fully aware of what they are changing. If you were about to do that, GO BACK.</value>
+  </data>
   <data name="Menu.FastFlags.Description" xml:space="preserve">
     <value>Control how specific Roblox engine parameters and features are configured.</value>
   </data>
   <data name="Menu.FastFlags.Editor.Description" xml:space="preserve">
-    <value>Manage your own FastFlags.</value>
+    <value>Manage your own Fast Flags. Use with caution.</value>
     <comment>Title is Menu.FastFlagEditor.Title</comment>
   </data>
   <data name="Menu.FastFlags.Help.Description" xml:space="preserve">
-    <value>Learn more about FastFlags.</value>
+    <value>Learn more about Fast Flags, what these presets do, and how to use them.</value>
     <comment>Title is Common.Help</comment>
   </data>
   <data name="Menu.FastFlags.Presets.AltGraphicsSelector.Description" xml:space="preserve">
-    <value>Toggle between using the consolidated 1-10 / fine-grained 1-21 graphics quality slider.</value>
+    <value>Allows you to configure 21 different quality levels instead of 10.</value>
   </data>
   <data name="Menu.FastFlags.Presets.AltGraphicsSelector.Title" xml:space="preserve">
-    <value>Use alternate graphics quality selector</value>
+    <value>Use advanced graphics quality selector</value>
   </data>
   <data name="Menu.FastFlags.Presets.D3DExclusiveFullscreenInfo" xml:space="preserve">
-    <value>FastFlag preset for Direct3D [exclusive fullscreen]({0}) using Alt+Enter is already enabled by default.</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.FlagStateOverlay.Description" xml:space="preserve">
-    <value>Show values of specified flags during runtime. Each flag is comma separated.</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.FlagStateOverlay.Title" xml:space="preserve">
-    <value>Flag state overlay</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.HttpProxyAddress.Description" xml:space="preserve">
-    <value>Set blank if not using a proxy. Don't forget to add cacert.pem as a mod.</value>
-    <comment>Do not translate "cacert.pem"</comment>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.HttpProxyAddress.Title" xml:space="preserve">
-    <value>HTTP proxy address</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.HttpRequestLogging.Description" xml:space="preserve">
-    <value>Enables logging of HTTP requests (DFLogHttpTraceLight=12).</value>
-    <comment>Do not translate "DFLogHttpTraceLight"</comment>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.HttpRequestLogging.Title" xml:space="preserve">
-    <value>HTTP request logging</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Debug.Title" xml:space="preserve">
-    <value>Debug</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.EscapeMenuVersion.Description" xml:space="preserve">
-    <value>Choose which version of the escape menu to use.</value>
+    <value>Direct3D [exclusive fullscreen]({0}) using Alt+Enter is enabled by default.</value>
   </data>
   <data name="Menu.FastFlags.Presets.EscapeMenuVersion.Title" xml:space="preserve">
     <value>Preferred escape menu version</value>
   </data>
   <data name="Menu.FastFlags.Presets.FixDisplayScaling.Description" xml:space="preserve">
-    <value>Roblox reduces your rendering quality, depending on display scaling. This toggle disables that.</value>
+    <value>Roblox reduces your rendering quality depending on how your display is scaled in Windows.</value>
   </data>
   <data name="Menu.FastFlags.Presets.FixDisplayScaling.Title" xml:space="preserve">
     <value>Preserve rendering quality with display scaling</value>
   </data>
   <data name="Menu.FastFlags.Presets.FPSLimit.Description" xml:space="preserve">
-    <value>Use a large number like 9999 for no limit. Set as 0 for defaults.</value>
+    <value>Set to 0 for defaults if you want to use Roblox's native framerate unlocker.</value>
   </data>
   <data name="Menu.FastFlags.Presets.FPSLimit.Title" xml:space="preserve">
     <value>Framerate limit</value>
@@ -793,22 +693,10 @@ Would you like to upgrade your currently installed version?</value>
     <value>Enable ability to hide GUIs</value>
   </data>
   <data name="Menu.FastFlags.Presets.LightingTechnology.Description" xml:space="preserve">
-    <value>Choose which lighting technology should be forced enabled in all games.</value>
+    <value>Chosen one will be force enabled in all games. [Beware, may cause lighting issues!]({0})</value>
   </data>
   <data name="Menu.FastFlags.Presets.LightingTechnology.Title" xml:space="preserve">
     <value>Preferred lighting technology</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Materials.Description" xml:space="preserve">
-    <value>Choose which material version should be forced in all games.</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.Materials.Title" xml:space="preserve">
-    <value>Preferred materials</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.MoreInfo" xml:space="preserve">
-    <value>More information on this preset</value>
-  </data>
-  <data name="Menu.FastFlags.Presets.RenderingMode.Description" xml:space="preserve">
-    <value>Choose what renderer Roblox should use. VR requires Direct3D/Automatic.</value>
   </data>
   <data name="Menu.FastFlags.Presets.RenderingMode.Title" xml:space="preserve">
     <value>Rendering mode</value>
@@ -876,12 +764,6 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   <data name="Menu.Integrations.AllowActivityJoining.Title" xml:space="preserve">
     <value>Allow activity joining</value>
   </data>
-  <data name="Menu.Integrations.AllowMultipleInstances.Description" xml:space="preserve">
-    <value>Allows for having more than one Roblox game client instance open simultaneously.</value>
-  </data>
-  <data name="Menu.Integrations.AllowMultipleInstances.Title" xml:space="preserve">
-    <value>Allow multi-instance launching</value>
-  </data>
   <data name="Menu.Integrations.Custom.AppLocation" xml:space="preserve">
     <value>Application Location</value>
   </data>
@@ -910,7 +792,13 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Custom Integrations</value>
   </data>
   <data name="Menu.Integrations.Description" xml:space="preserve">
-    <value>Configure quick and easy ways to improve the Roblox gameplay experience.</value>
+    <value>Configure additional functionality to go alongside Roblox.</value>
+  </data>
+  <data name="Menu.Integrations.DesktopApp.Description" xml:space="preserve">
+    <value>Roblox will fully close when you leave a game instead of dropping you back into the app.</value>
+  </data>
+  <data name="Menu.Integrations.DesktopApp.Title" xml:space="preserve">
+    <value>Don't exit to desktop app</value>
   </data>
   <data name="Menu.Integrations.EnableActivityTracking.Description" xml:space="preserve">
     <value>Allows for Bloxstrap to detect what Roblox game you're playing. Certain features may require this.</value>
@@ -918,14 +806,11 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   <data name="Menu.Integrations.EnableActivityTracking.Title" xml:space="preserve">
     <value>Enable activity tracking</value>
   </data>
-  <data name="Menu.Integrations.MoreInfo" xml:space="preserve">
-    <value>More information on this integration</value>
-  </data>
   <data name="Menu.Integrations.RequiresActivityTracking" xml:space="preserve">
-    <value>This feature requires activity tracking to be enabled.</value>
+    <value>This feature requires activity tracking to be enabled and the Discord desktop app to be installed and running.</value>
   </data>
   <data name="Menu.Integrations.ShowGameActivity.Description" xml:space="preserve">
-    <value>When playing a Roblox game, the game you're playing will show on your Discord profile activity.</value>
+    <value>The Roblox game you're playing will be shown on your Discord profile. [Not working?]({0})</value>
   </data>
   <data name="Menu.Integrations.ShowGameActivity.Title" xml:space="preserve">
     <value>Show game activity</value>
@@ -968,13 +853,16 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Choose font...</value>
   </data>
   <data name="Menu.Mods.Misc.CustomFont.Description" xml:space="preserve">
-    <value>Forces every in-game font to be a font that you choose.</value>
+    <value>Font size can be adjusted in the Fast Flags tab.</value>
+  </data>
+  <data name="Menu.Mods.Misc.CustomFont.Invalid" xml:space="preserve">
+    <value>The file you have chosen does not appear to be a valid font file.</value>
   </data>
   <data name="Menu.Mods.Misc.CustomFont.Remove" xml:space="preserve">
     <value>Remove applied font</value>
   </data>
   <data name="Menu.Mods.Misc.CustomFont.Title" xml:space="preserve">
-    <value>Apply custom font</value>
+    <value>Use custom font</value>
   </data>
   <data name="Menu.Mods.Misc.DisableFullscreenOptimisations.Description" xml:space="preserve">
     <value>A Windows feature that may conflict with performance in full-screen.</value>
@@ -990,12 +878,6 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   </data>
   <data name="Menu.Mods.OpenModsFolder.Title" xml:space="preserve">
     <value>Open Mods Folder</value>
-  </data>
-  <data name="Menu.Mods.Presets.DisableDesktopApp.Description" xml:space="preserve">
-    <value>Stops the desktop app from showing, especially when you leave a game.</value>
-  </data>
-  <data name="Menu.Mods.Presets.DisableDesktopApp.Title" xml:space="preserve">
-    <value>Disable desktop app</value>
   </data>
   <data name="Menu.Mods.Presets.EmojiType.Description" xml:space="preserve">
     <value>Choose which type of emoji should Roblox use.</value>
@@ -1037,7 +919,7 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>There's just a few things you first should know about.</value>
   </data>
   <data name="Menu.PreInstall.Info.1" xml:space="preserve">
-    <value>After installation has finished, the Bloxstrap Menu will be registered as an application in the Start menu. If you ever need to access it again to re-adjust your settings, or access resources such as FastFlag management, you can find it there.</value>
+    <value>After installation has finished, the Bloxstrap Menu will be registered as an application in the Start menu. If you ever need to access it again to re-adjust your settings, or access resources such as Fast Flag management, you can find it there.</value>
   </data>
   <data name="Menu.PreInstall.Info.2" xml:space="preserve">
     <value>If you ever need help or guidance with anything, be sure to check the [Wiki]({0}). If you still need something, open an [issue]({1}) on GitHub, or join our [Discord server]({2}).</value>
@@ -1048,12 +930,116 @@ Selecting 'No' will ignore this warning and continue installation.</value>
   <data name="Menu.Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Menu.SettingsSaved.Message" xml:space="preserve">
+    <value>Changes will take effect the next time you launch Roblox.</value>
+  </data>
+  <data name="Menu.SettingsSaved.Title" xml:space="preserve">
+    <value>Settings saved!</value>
+  </data>
   <data name="Menu.Title" xml:space="preserve">
     <value>Bloxstrap Menu</value>
   </data>
-  <data name="ProtocolHandler.RobloxSwitchedChannel" xml:space="preserve">
-    <value>Roblox is attempting to set your channel to {0}, however your current preferred channel is {1}.
-
-Would you like to switch your preferred channel to {0}?</value>
+  <data name="Dialog.LanguageSelector.Header" xml:space="preserve">
+    <value>Choose preferred language</value>
+  </data>
+  <data name="Dialog.LanguageSelector.Subtext" xml:space="preserve">
+    <value>Choose a language before continuing with installation.</value>
+  </data>
+  <data name="Menu.Appearance.Language.Title" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Menu.Appearance.Language.Description" xml:space="preserve">
+    <value>A relaunch is required for changes to take effect.</value>
+  </data>
+  <data name="Menu.Behaviour.ForceRobloxLanguage.Title" xml:space="preserve">
+    <value>Allow use of unsupported Roblox languages</value>
+  </data>
+  <data name="Menu.Behaviour.ForceRobloxLanguage.Description" xml:space="preserve">
+    <value>Only applies to games launched from the Roblox website.</value>
+  </data>
+  <data name="Enums.FlagPresets.InGameMenuVersion.V4Chrome" xml:space="preserve">
+    <value>2023 (V4 + New UI)</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.Categories.Rendering" xml:space="preserve">
+    <value>Rendering and Graphics</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.Categories.UserInterface" xml:space="preserve">
+    <value>User Interface and Layout</value>
+  </data>
+  <data name="Menu.FastFlags.ManagerEnabled.Title" xml:space="preserve">
+    <value>Allow Bloxstrap to manage Fast Flags</value>
+  </data>
+  <data name="Menu.FastFlags.ManagerEnabled.Description" xml:space="preserve">
+    <value>Disabling this will prevent anything configured here from being applied to Roblox.</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.MSAA.Title" xml:space="preserve">
+    <value>Anti-aliasing quality (MSAA)</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.DisablePostFX.Title" xml:space="preserve">
+    <value>Disable post-processing effects</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.FullscreenTitlebar.Title" xml:space="preserve">
+    <value>Disable full-screen titlebar</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.FullscreenTitlebar.Description" xml:space="preserve">
+    <value>Stops it from showing whenever you move your mouse to the top of the screen.</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.TextureQuality.Title" xml:space="preserve">
+    <value>Texture quality</value>
+  </data>
+  <data name="Enums.FlagPresets.TextureQuality.Level0" xml:space="preserve">
+    <value>Level 0 (Lowest)</value>
+  </data>
+  <data name="Enums.FlagPresets.TextureQuality.Level1" xml:space="preserve">
+    <value>Level 1</value>
+  </data>
+  <data name="Enums.FlagPresets.TextureQuality.Level2" xml:space="preserve">
+    <value>Level 2</value>
+  </data>
+  <data name="Enums.FlagPresets.TextureQuality.Level3" xml:space="preserve">
+    <value>Level 3 (Highest)</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.DisablePlayerShadows.Title" xml:space="preserve">
+    <value>Disable player shadows</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.FontPadding.Title" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.FontPadding.Description" xml:space="preserve">
+    <value>Default value is 1. Adjust if you use a custom font.</value>
+  </data>
+  <data name="Menu.FastFlags.Presets.DisableTerrainTextures.Title" xml:space="preserve">
+    <value>Disable terrain textures</value>
+  </data>
+  <data name="Dialog.Connectivity.UnableToDownload" xml:space="preserve">
+    <value>Bloxstrap is unable to download Roblox</value>
+  </data>
+  <data name="Dialog.Connectivity.UnableToDownloadReason" xml:space="preserve">
+    <value>Roblox cannot be downloaded at this time. Please read the following help page for more information: {0}</value>
+  </data>
+  <data name="Common.ImportFromFile" xml:space="preserve">
+    <value>Import from file</value>
+  </data>
+  <data name="FileTypes.JSONFiles" xml:space="preserve">
+    <value>JSON files</value>
+  </data>
+  <data name="Menu.FastFlagEditor.InvalidBoolValue" xml:space="preserve">
+    <value>The entry for '{0}' is not valid as the value must be a boolean (either 'True' or 'False')</value>
+    <comment>Do not translate 'True' and 'False', those must stay in English</comment>
+  </data>
+  <data name="Menu.FastFlagEditor.InvalidNumberValue" xml:space="preserve">
+    <value>The entry for '{0}' is not valid as the value must be a number</value>
+  </data>
+  <data name="Logger.NoWriteMode" xml:space="preserve">
+    <value>No log file will be written for this launch because Bloxstrap is unable to write to the folder at '{0}'</value>
+  </data>
+  <data name="Common.Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="Common.Automatic" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="Common.SystemDefault" xml:space="preserve">
+    <value>System default</value>
   </data>
 </root>

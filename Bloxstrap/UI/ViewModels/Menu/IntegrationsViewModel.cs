@@ -1,6 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
 
+using Bloxstrap.Resources;
+
+using Microsoft.Win32;
+
 using CommunityToolkit.Mvvm.Input;
 
 namespace Bloxstrap.UI.ViewModels.Menu
@@ -9,6 +13,7 @@ namespace Bloxstrap.UI.ViewModels.Menu
     {
         public ICommand AddIntegrationCommand => new RelayCommand(AddIntegration);
         public ICommand DeleteIntegrationCommand => new RelayCommand(DeleteIntegration);
+        public ICommand BrowseIntegrationLocationCommand => new RelayCommand(BrowseIntegrationLocation);
 
         private void AddIntegration()
         {
@@ -39,6 +44,23 @@ namespace Bloxstrap.UI.ViewModels.Menu
             OnPropertyChanged(nameof(IsCustomIntegrationSelected));
         }
 
+        private void BrowseIntegrationLocation()
+        {
+            if (SelectedCustomIntegration is null)
+                return;
+
+            var dialog = new OpenFileDialog
+            {
+                Filter = $"{Strings.Menu_AllFiles}|*.*"
+            };
+
+            if (dialog.ShowDialog() != true)
+                return;
+
+            SelectedCustomIntegration.Location = dialog.FileName;
+            OnPropertyChanged(nameof(SelectedCustomIntegration));
+        }
+
         public bool ActivityTrackingEnabled
         {
             get => App.Settings.Prop.EnableActivityTracking;
@@ -49,12 +71,14 @@ namespace Bloxstrap.UI.ViewModels.Menu
                 if (!value)
                 {
                     ShowServerDetailsEnabled = value;
+                    DisableAppPatchEnabled = value;
                     DiscordActivityEnabled = value;
                     GameWindowControlEnabled = value;
                     GameWindowTitleControlEnabled = value;
                     DiscordActivityJoinEnabled = value;
 
                     OnPropertyChanged(nameof(ShowServerDetailsEnabled));
+                    OnPropertyChanged(nameof(DisableAppPatchEnabled));
                     OnPropertyChanged(nameof(DiscordActivityEnabled));
                     OnPropertyChanged(nameof(GameWindowControlEnabled));
                     OnPropertyChanged(nameof(GameWindowTitleControlEnabled));
@@ -108,10 +132,10 @@ namespace Bloxstrap.UI.ViewModels.Menu
             set => App.Settings.Prop.HideRPCButtons = !value;
         }
 
-        public bool MultiInstanceLaunchingEnabled
+        public bool DisableAppPatchEnabled
         {
-            get => App.Settings.Prop.MultiInstanceLaunching;
-            set => App.Settings.Prop.MultiInstanceLaunching = value;
+            get => App.Settings.Prop.UseDisableAppPatch;
+            set => App.Settings.Prop.UseDisableAppPatch = value;
         }
 
         public ObservableCollection<CustomIntegration> CustomIntegrations
