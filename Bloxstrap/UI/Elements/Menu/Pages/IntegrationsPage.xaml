@@ -57,7 +57,7 @@
             <ui:ToggleSwitch IsChecked="{Binding DiscordActivityJoinEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
-        <TextBlock Text="{x:Static resources:Strings.Common_WindowMovement}" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
+        <TextBlock Text="{x:Static resources:Strings.Common_WindowMovement}" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />
         <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_RequiresActivityTracking}" TextWrapping="Wrap" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
 
         <controls:OptionControl 
@@ -80,14 +80,6 @@
             Header="{x:Static resources:Strings.Menu_Integrations_GameWindowLogFPS_Title}" 
             Description="{x:Static resources:Strings.Menu_Integrations_GameWindowLogFPS_Description}">
             <ui:TextBox Margin="5,0,0,0" Padding="10,5,10,5" Width="150" Text="{Binding GameWindowLogFPSInterval, Mode=TwoWay}" PreviewTextInput="ValidateInt32" />
-        </controls:OptionControl>
-        
-        <TextBlock Text="{x:Static resources:Strings.Common_Miscellaneous}" FontSize="16" FontWeight="Medium" Margin="0,16,0,0" />
-
-        <controls:OptionControl 
-            Header="{x:Static resources:Strings.Menu_Integrations_AllowMultipleInstances_Title}" 
-            Description="{x:Static resources:Strings.Menu_Integrations_AllowMultipleInstances_Description}">
-            <ui:ToggleSwitch IsChecked="{Binding MultiInstanceLaunchingEnabled, Mode=TwoWay}" />
         </controls:OptionControl>
 
         <TextBlock Text="{x:Static resources:Strings.Menu_Integrations_Custom_Title}" FontSize="20" FontWeight="Medium" Margin="0,16,0,0" />

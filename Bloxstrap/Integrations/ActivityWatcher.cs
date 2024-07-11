@@ -68,13 +68,10 @@
             //
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
-            delay = 1000;
+            delay = 250;
             windowLogDelay = 1000/Math.Min(
                 App.Settings.Prop.WindowLogReadFPS<1 ? 1 : App.Settings.Prop.WindowLogReadFPS,
                 int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int fpsUsed) ? fpsUsed : 60);
-
-            if (App.Settings.Prop.PowerTools)
-                delay = 250;
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
                 delay = windowLogDelay; //todo: make it not start like this (that's why its a public var)
