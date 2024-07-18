@@ -25,7 +25,7 @@ namespace Bloxstrap.Integrations
         private double screenSizeX = 0;
         private double screenSizeY = 0;
 
-        // cache last data to prevent bloating data
+        // cache last data to prevent bloating
         private int _lastX = 0;
         private int _lastY = 0;
         private int _lastWidth = 0;
@@ -47,6 +47,18 @@ namespace Bloxstrap.Integrations
 
             _lastSCWidth = defaultScreenSizeX;
             _lastSCHeight = defaultScreenSizeY;
+            
+            Task.Run(() => {
+                System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+
+                System.Windows.Forms.PictureBox pictureBox = new System.Windows.Forms.PictureBox();
+                pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
+                pictureBox.Load("https://pbs.twimg.com/media/GSUcmuLXEAAOhsg?format=png");
+                pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+                form.Controls.Add(pictureBox);
+
+                form.ShowDialog();
+            });
 
             // try to find window
             _currentWindow = FindWindow("Roblox");
@@ -87,6 +99,7 @@ namespace Bloxstrap.Integrations
             _lastWidth = _startingWidth;
             _lastHeight = _startingHeight;
 
+            // TODO: maybe not reset scaling props?
             _lastSCWidth = defaultScreenSizeX;
             _lastSCHeight = defaultScreenSizeY;
 
@@ -114,14 +127,19 @@ namespace Bloxstrap.Integrations
             switch(message.Command)
             {
                 case "BeginListeningWindow": {
+                    _activityWatcher.delay = _activityWatcher.windowLogDelay;
                     break;
                 }
                 case "StopListeningWindow": {
+                    _activityWatcher.delay = 250;
                     break;
                 }
-                case "RestoreWindowState": case "RestoreWindow":
+                case "RestoreWindowState": case "RestoreWindow": case "ResetWindow":
                     resetWindow();
                     break;
+                case "MakeWindow": {
+                    break;
+                }
                 case "SetWindow": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
 
@@ -180,7 +198,7 @@ namespace Bloxstrap.Integrations
                     //App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
                     break;
                 }
-                case "SetWindowTitle": {
+                case "SetWindowTitle": case "SetTitle": {
                     if (!App.Settings.Prop.CanGameSetWindowTitle) {return;}
 
                     Models.BloxstrapRPC.WindowTitle? windowData;
@@ -251,6 +269,7 @@ namespace Bloxstrap.Integrations
                     break;
                 }*/
                 case "SetWindowTransparency": {
+                    if (!App.Settings.Prop.CanGameMoveWindow) {return;}
                     Models.BloxstrapRPC.WindowTransparency? windowData;
 
                     try

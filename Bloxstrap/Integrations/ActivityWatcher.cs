@@ -45,8 +45,8 @@
 
         public bool IsDisposed = false;
 
-        public int delay = 1000;
-        public int windowLogDelay = 1000;
+        public int delay = 250;
+        public int windowLogDelay = 250;
 
         public ActivityWatcher(int gameClientPid)
         {
@@ -69,9 +69,10 @@
             // we'll tail the log file continuously, monitoring for any log entries that we need to determine the current game activity
 
             delay = 250;
+
             windowLogDelay = 1000/Math.Min(
                 App.Settings.Prop.WindowLogReadFPS<1 ? 1 : App.Settings.Prop.WindowLogReadFPS,
-                int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int fpsUsed) ? fpsUsed : 60);
+                int.TryParse(App.FastFlags.GetPreset("Rendering.Framerate"), out int fpsUsed) ? fpsUsed : 60); // maybe remove this one since it can be changed in runtime now
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
                 delay = windowLogDelay; //todo: make it not start like this (that's why its a public var)

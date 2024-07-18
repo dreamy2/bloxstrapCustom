@@ -828,7 +828,7 @@ Selecting 'No' will ignore this warning and continue installation.</value>
     <value>Allows the game to set window title</value>
   </data>
   <data name="Menu.Integrations.GameWindowLogFPS.Title" xml:space="preserve">
-    <value>Window Movement FPS</value>
+    <value>Window movement FPS</value>
   </data>
   <data name="Menu.Integrations.GameWindowLogFPS.Description" xml:space="preserve">
     <value>Using a high number will cause lag! Use your monitor framerate or a lower value!</value>
