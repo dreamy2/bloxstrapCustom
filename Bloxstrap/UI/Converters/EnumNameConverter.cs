@@ -36,11 +36,7 @@ namespace Bloxstrap.UI.Converters
                 }
             }
 
-            return Resources.Strings.ResourceManager.GetStringSafe(String.Format(
-                "{0}.{1}",
-                typeName.Substring(typeName.IndexOf('.', StringComparison.Ordinal) + 1),
-                stringVal
-            ));
+            return Resources.Strings.ResourceManager.GetStringSafe(String.Format("{0}.{1}", typeName.Substring(typeName.IndexOf('.', StringComparison.Ordinal) + 1), stringVal));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

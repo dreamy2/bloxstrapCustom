@@ -134,7 +134,7 @@ namespace Bloxstrap
 
             App.Logger.WriteLine(LOG_IDENT, "Performing connectivity check...");
 
-            SetStatus(Resources.Strings.Bootstrapper_Status_Connecting);
+            SetStatus(Strings.Bootstrapper_Status_Connecting);
 
             try
             {
@@ -145,12 +145,12 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Connectivity check failed!");
                 App.Logger.WriteException(LOG_IDENT, ex);
 
-                string message = Resources.Strings.Bootstrapper_Connectivity_Preventing;
+                string message = Strings.Bootstrapper_Connectivity_Preventing;
 
                 if (ex.GetType() == typeof(HttpResponseException))
-                    message = Resources.Strings.Bootstrapper_Connectivity_RobloxDown;
+                    message = Strings.Bootstrapper_Connectivity_RobloxDown;
                 else if (ex.GetType() == typeof(TaskCanceledException))
-                    message = Resources.Strings.Bootstrapper_Connectivity_TimedOut;
+                    message = Strings.Bootstrapper_Connectivity_TimedOut;
                 else if (ex.GetType() == typeof(AggregateException))
                     ex = ex.InnerException!;
 
@@ -177,7 +177,7 @@ namespace Bloxstrap
             {
                 Mutex.OpenExisting("Bloxstrap_SingletonMutex").Close();
                 App.Logger.WriteLine(LOG_IDENT, "Bloxstrap_SingletonMutex mutex exists, waiting...");
-                SetStatus(Resources.Strings.Bootstrapper_Status_WaitingOtherInstances);
+                SetStatus(Strings.Bootstrapper_Status_WaitingOtherInstances);
                 mutexExists = true;
             }
             catch (Exception)
@@ -228,7 +228,7 @@ namespace Bloxstrap
             await mutex.ReleaseAsync();
 
             if (App.IsFirstRun && App.LaunchSettings.IsNoLaunch)
-                Dialog?.ShowSuccess(Resources.Strings.Bootstrapper_SuccessfullyInstalled);
+                Dialog?.ShowSuccess(Strings.Bootstrapper_SuccessfullyInstalled);
             else if (!App.LaunchSettings.IsNoLaunch && !_cancelFired)
                 await StartRoblox();
         }
@@ -272,12 +272,12 @@ namespace Bloxstrap
         {
             const string LOG_IDENT = "Bootstrapper::StartRoblox";
 
-            SetStatus(Resources.Strings.Bootstrapper_Status_Starting);
+            SetStatus(Strings.Bootstrapper_Status_Starting);
 
             if (!File.Exists(Path.Combine(Paths.System, "mfplat.dll")))
             {
                 Frontend.ShowMessageBox(
-                    Resources.Strings.Bootstrapper_WMFNotFound, 
+                    Strings.Bootstrapper_WMFNotFound, 
                     MessageBoxImage.Error
                 );
 
@@ -639,7 +639,7 @@ namespace Bloxstrap
                 return;
             }
 
-            SetStatus(Resources.Strings.Bootstrapper_Status_UpgradingBloxstrap);
+            SetStatus(Strings.Bootstrapper_Status_UpgradingBloxstrap);
             
             try
             {
@@ -680,7 +680,7 @@ namespace Bloxstrap
                 App.Logger.WriteException(LOG_IDENT, ex);
 
                 Frontend.ShowMessageBox(
-                    string.Format(Resources.Strings.Bootstrapper_AutoUpdateFailed, releaseInfo.TagName),
+                    string.Format(Strings.Bootstrapper_AutoUpdateFailed, releaseInfo.TagName),
                     MessageBoxImage.Information
                 );
             }
@@ -696,7 +696,7 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, $"Prompting to shut down all open Roblox instances");
                 
                 MessageBoxResult result = Frontend.ShowMessageBox(
-                    Resources.Strings.Bootstrapper_Uninstall_RobloxRunning,
+                    Strings.Bootstrapper_Uninstall_RobloxRunning,
                     MessageBoxImage.Information,
                     MessageBoxButton.OKCancel
                 );
@@ -728,7 +728,7 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, $"All Roblox processes closed");
             }
             
-            SetStatus(Resources.Strings.Bootstrapper_Status_Uninstalling);
+            SetStatus(Strings.Bootstrapper_Status_Uninstalling);
 
             App.ShouldSaveConfigs = false;
             bool robloxPlayerStillInstalled = true;
@@ -849,7 +849,7 @@ namespace Bloxstrap
                 };
             }
 
-            Dialog?.ShowSuccess(Resources.Strings.Bootstrapper_SuccessfullyUninstalled, callback);
+            Dialog?.ShowSuccess(Strings.Bootstrapper_SuccessfullyUninstalled, callback);
         }
 #endregion
 
@@ -860,7 +860,7 @@ namespace Bloxstrap
             
             _isInstalling = true;
 
-            SetStatus(FreshInstall ? Resources.Strings.Bootstrapper_Status_Installing : Resources.Strings.Bootstrapper_Status_Upgrading);
+            SetStatus(FreshInstall ? Strings.Bootstrapper_Status_Installing : Strings.Bootstrapper_Status_Upgrading);
 
             Directory.CreateDirectory(Paths.Base);
             Directory.CreateDirectory(Paths.Downloads);
@@ -874,7 +874,7 @@ namespace Bloxstrap
             if (Filesystem.GetFreeDiskSpace(Paths.Base) < totalSizeRequired)
             {
                 Frontend.ShowMessageBox(
-                    Resources.Strings.Bootstrapper_NotEnoughSpace, 
+                    Strings.Bootstrapper_NotEnoughSpace, 
                     MessageBoxImage.Error
                 );
 
@@ -919,7 +919,7 @@ namespace Bloxstrap
             if (Dialog is not null)
             {
                 Dialog.ProgressStyle = ProgressBarStyle.Marquee;
-                SetStatus(Resources.Strings.Bootstrapper_Status_Configuring);
+                SetStatus(Strings.Bootstrapper_Status_Configuring);
             }
 
             // wait for all packages to finish extracting, with an exception for the webview2 runtime installer
@@ -1044,7 +1044,7 @@ namespace Bloxstrap
                 await ExtractPackage(package);
             }
 
-            SetStatus(Resources.Strings.Bootstrapper_Status_InstallingWebView2);
+            SetStatus(Strings.Bootstrapper_Status_InstallingWebView2);
 
             ProcessStartInfo startInfo = new()
             {
@@ -1073,7 +1073,7 @@ namespace Bloxstrap
             if (File.Exists(injectorLocation))
             {
                 Frontend.ShowMessageBox(
-                    Resources.Strings.Bootstrapper_HyperionUpdateInfo,
+                    Strings.Bootstrapper_HyperionUpdateInfo,
                     MessageBoxImage.Warning
                 );
 
@@ -1094,7 +1094,7 @@ namespace Bloxstrap
                 return;
             }
 
-            SetStatus(Resources.Strings.Bootstrapper_Status_ApplyingModifications);
+            SetStatus(Strings.Bootstrapper_Status_ApplyingModifications);
 
             // set executable flags for fullscreen optimizations
             App.Logger.WriteLine(LOG_IDENT, "Checking executable flags...");
