@@ -16,6 +16,8 @@ namespace Bloxstrap
 
         public readonly DiscordRichPresence? RichPresence;
 
+        public readonly WindowController? WindowController;
+
         public Watcher()
         {
             const string LOG_IDENT = "Watcher";
@@ -79,6 +81,9 @@ namespace Bloxstrap
 
                 if (App.Settings.Prop.UseDiscordRichPresence)
                     RichPresence = new(ActivityWatcher);
+
+                if (App.Settings.Prop.CanGameMoveWindow || App.Settings.Prop.CanGameSetWindowTitle) 
+                    WindowController = new(ActivityWatcher);
             }
 
             _notifyIcon = new(this);
@@ -133,6 +138,7 @@ namespace Bloxstrap
 
             _notifyIcon?.Dispose();
             RichPresence?.Dispose();
+            WindowController?.Dispose();
 
             GC.SuppressFinalize(this);
         }

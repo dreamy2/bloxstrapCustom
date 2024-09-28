@@ -15,8 +15,6 @@ namespace Bloxstrap.Integrations
 
         private bool _visible = true;
         private DateTime LastRPCRequest;
-        private long _currentUniverseId;
-        private DateTime? _timeStartedUniverse;
 
         public DiscordRichPresence(ActivityWatcher activityWatcher)
         {
@@ -71,8 +69,6 @@ namespace Bloxstrap.Integrations
             }
 
             LastRPCRequest = DateTime.Now;
-
-            Models.BloxstrapRPC.RichPresence? presenceData;
             
             // a lot of repeated code here, could this somehow be cleaned up?
 

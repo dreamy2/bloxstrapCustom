@@ -47,18 +47,6 @@ namespace Bloxstrap.Integrations
 
             _lastSCWidth = defaultScreenSizeX;
             _lastSCHeight = defaultScreenSizeY;
-            
-            Task.Run(() => {
-                System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-
-                System.Windows.Forms.PictureBox pictureBox = new System.Windows.Forms.PictureBox();
-                pictureBox.Dock = System.Windows.Forms.DockStyle.Fill;
-                pictureBox.Load("https://pbs.twimg.com/media/GSUcmuLXEAAOhsg?format=png");
-                pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-                form.Controls.Add(pictureBox);
-
-                form.ShowDialog();
-            });
 
             // try to find window
             _currentWindow = FindWindow("Roblox");
