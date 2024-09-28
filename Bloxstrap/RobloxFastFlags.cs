@@ -52,16 +52,7 @@ namespace Bloxstrap
 
                 string rawResponse = await response.Content.ReadAsStringAsync();
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    App.Logger.WriteLine(logIndent,
-                        "Failed to fetch client settings!\r\n" +
-                        $"\tStatus code: {response.StatusCode}\r\n" +
-                        $"\tResponse: {rawResponse}"
-                    );
-
-                    throw new HttpResponseException(response);
-                }
+                response.EnsureSuccessStatusCode();
 
                 var clientSettings = JsonSerializer.Deserialize<ClientFlagSettings>(rawResponse);
 
@@ -114,27 +105,23 @@ namespace Bloxstrap
         public static RobloxFastFlags PCDesktopClient { get; } = GetSettings("PCDesktopClient");
         public static RobloxFastFlags PCClientBootstrapper { get; } = GetSettings("PCClientBootstrapper");
 
-        public static RobloxFastFlags GetSettings(string applicationName, string? channelName = null, bool shouldCache = true)
+        public static RobloxFastFlags GetSettings(string applicationName, string channelName = RobloxDeployment.DefaultChannel, bool shouldCache = true)
         {
-            string channelNameLower;
-            if (!string.IsNullOrEmpty(channelName))
-                channelNameLower = channelName.ToLowerInvariant();
-            else
-                channelNameLower = App.Settings.Prop.Channel.ToLowerInvariant();
+            channelName = channelName.ToLowerInvariant();
 
             lock (_cache)
             {
-                if (_cache.ContainsKey(applicationName) && _cache[applicationName].ContainsKey(channelNameLower))
-                    return _cache[applicationName][channelNameLower];
+                if (_cache.ContainsKey(applicationName) && _cache[applicationName].ContainsKey(channelName))
+                    return _cache[applicationName][channelName];
 
-                var flags = new RobloxFastFlags(applicationName, channelNameLower);
+                var flags = new RobloxFastFlags(applicationName, channelName);
 
                 if (shouldCache)
                 {
                     if (!_cache.ContainsKey(applicationName))
                         _cache[applicationName] = new();
 
-                    _cache[applicationName][channelNameLower] = flags;
+                    _cache[applicationName][channelName] = flags;
                 }
 
                 return flags;

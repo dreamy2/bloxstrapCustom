@@ -78,7 +78,6 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         public ClassicFluentDialog()
         {
             InitializeComponent();
-            ApplyTheme();
 
             _viewModel = new ClassicFluentDialogViewModel(this);
             DataContext = _viewModel;
@@ -89,7 +88,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         private void UiWindow_Closing(object sender, CancelEventArgs e)
         {
             if (!_isClosing)
-                Bootstrapper?.CancelInstall();
+                Bootstrapper?.Cancel();
         }
 
         #region IBootstrapperDialog Methods

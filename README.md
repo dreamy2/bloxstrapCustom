@@ -1,5 +1,5 @@
 > [!CAUTION]
-> The only official places to download Bloxstrap are this GitHub repository and [bloxstrap.pizzaboxer.xyz](https://bloxstrap.pizzaboxer.xyz). Any other websites offering downloads or claiming to be us are not controlled by us.
+> The only official places to download Bloxstrap are this GitHub repository and [bloxstraplabs.com](https://bloxstraplabs.com). Any other websites offering downloads or claiming to be us are not controlled by us.
 
 # <img src="https://github.com/pizzaboxer/bloxstrap/raw/main/Images/Bloxstrap.png" width="48"/> Bloxstrap
 
@@ -96,13 +96,118 @@ To install a build:
 
 Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
 
-This is a drop-in replacement for the standard Roblox bootstrapper, providing additional useful features and improvements. Nothing more, nothing less.
+--> Minz's fork
+    -- Window movement:
+        (https://streamable.com/b1iqei)
+    -- prob more to come
 
-This does not touch or modify the game client itself, it's really just a launcher. So don't worry, there's [no risk of being banned](https://github.com/pizzaboxer/bloxstrap/wiki/Why-it%27s-not-reasonably-possible-for-you-to-be-banned-by-Bloxstrap) for using this.
+!! CURRENT BUILD -> [Build](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe);
 
-Running into a problem or need help with something? [Check out the Wiki](https://github.com/pizzaboxer/bloxstrap/wiki). If you can't find anything, or would like to suggest something, please [submit an issue](https://github.com/pizzaboxer/bloxstrap/issues) or report it in our [Discord server](https://discord.gg/nKjV3mGq6R).
+EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
+
+```luau
+-- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
+local next = next;
+local round = math.round;
+
+export type Window = {
+    x:				number?,
+    y: 				number?,
+    width:			number?,
+    height: 		number?,
+
+    scaleWidth: 	number?,
+    scaleHeight: 	number?,
+
+    reset:			boolean?,
+}
+
+function GetFFlag(flag)
+	local suc,result = pcall(function()
+		return UserSettings():IsUserFeatureEnabled(flag);
+	end)
+
+	return suc and result or false;
+end
+
+local winMovementAllowed = GetFFlag("UserAllowsWindowMovement");
+
+local prevWinData = {}
+
+function makeDiff(a, b)
+    local new = {};
+    for k,v in b do
+        new[k] = v;
+    end
+
+    for k,v in a do 
+        if new[k]==v then   new[k] = nil   end
+    end
+    return new
+end
+
+function BloxstrapRPC.SetWindow(data:Window)
+    if not winMovementAllowed then return end;
+
+    if data.reset then
+        BloxstrapRPC.SendMessage("SetWindow", {reset=true});
+        prevWinData = {};
+        return;
+    end
+
+    data.reset = nil;
+
+    for i,v in data do
+        data[i] = round(v)
+    end
+
+    local diff = makeDiff(prevWinData,data)
+    if not next(diff) then return end;
+
+    prevWinData = data;
+
+    BloxstrapRPC.SendMessage("SetWindow", diff)
+end
+```
+
+To install a build:
+
+    --> Already installed bloxstrap:
+            Do Win+R and paste "%localappdata%\Bloxstrap" and run
+            Replace .exe file with the new one downloaded
+        
+    --> Havent installed bloxstrap:
+            Running the exe should install the fork not sure
+            If it doesnt work but it installs, do the "Already installed bloxstrap" steps
+
+Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
+
+Bloxstrap is a third-party replacement for the standard Roblox bootstrapper, providing additional useful features and improvements.
+
+Running into a problem or need help with something? [Check out the Wiki](https://github.com/pizzaboxer/bloxstrap/wiki). If you can't find anything, or would like to suggest something, please [submit an issue](https://github.com/pizzaboxer/bloxstrap/issues).
  
 Bloxstrap is only supported for PCs running Windows.
+
+## Frequently Asked Questions
+
+**Q: Is this malware?**
+
+**A:** No. The source code here is viewable to all, and it'd be impossible for us to slip anything malicious into the downloads without anyone noticing. Just be sure you're downloading it from an official source. The only two official sources are this GitHub repository and [bloxstraplabs.com](https://bloxstraplabs.com).
+
+**Q: Can using this get me banned?**
+
+**A:** No, it shouldn't. Bloxstrap doesn't interact with the Roblox client in the same way that exploits do. [Read more about that here.](https://github.com/pizzaboxer/bloxstrap/wiki/Why-it's-not-reasonably-possible-for-you-to-be-banned-by-Bloxstrap)
+
+**Q: Why was multi-instance launching removed?**
+
+**A:** It was removed starting with v2.6.0 for the [reasons stated here](https://github.com/pizzaboxer/bloxstrap/wiki/Plans-to-remove-multi%E2%80%90instance-launching-from-Bloxstrap). It may be added back in the future when there are less issues with doing so.
+
+## Features
+
+- Hassle-free Discord Rich Presence to let your friends know what you're playing at a glance
+- Simple support for modding of content files for customizability (death sound, mouse cursor, etc)
+- See where your server is geographically located (courtesy of [ipinfo.io](https://ipinfo.io))
+- Ability to configure graphics fidelity and UI experience
  
  ## Installing
 Download the [latest release of Bloxstrap](https://github.com/pizzaboxer/bloxstrap/releases/latest), and run it. Configure your preferences if needed, and install. That's about it!
@@ -117,16 +222,6 @@ You will also need the [.NET 6 Desktop Runtime](https://aka.ms/dotnet-core-appla
 It's not unlikely that Windows Smartscreen will show a popup when you run Bloxstrap for the first time. This happens because it's an unknown program, not because it's actually detected as being malicious. To dismiss it, just click on "More info" and then "Run anyway".
 
 Once installed, Bloxstrap is added to your Start Menu, where you can access the menu and reconfigure your preferences if needed.
- 
-## Features
-Here's some of the features that Bloxstrap provides over the stock Roblox bootstrapper:
-
-* Persistent file modifications, includes re-adding the old death sound!
-* Painless and seamless support for Discord Rich Presence
-* A customizable launcher look
-* Lets you see what region your current server is located in
-
-All the available features are browsable through the Bloxstrap menu.
 
 ## Screenshots
 

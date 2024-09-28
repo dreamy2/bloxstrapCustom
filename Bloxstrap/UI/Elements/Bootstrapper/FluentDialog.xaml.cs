@@ -88,7 +88,6 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         public FluentDialog(bool aero)
         {
             InitializeComponent();
-            ApplyTheme();
 
             _viewModel = new FluentDialogViewModel(this, aero);
             DataContext = _viewModel;
@@ -103,7 +102,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         private void UiWindow_Closing(object sender, CancelEventArgs e)
         {
             if (!_isClosing)
-                Bootstrapper?.CancelInstall();
+                Bootstrapper?.Cancel();
         }
 
         #region IBootstrapperDialog Methods

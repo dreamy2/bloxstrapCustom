@@ -2,7 +2,9 @@
 {
     public static class RobloxDeployment
     {
-        public const string DefaultChannel = "LIVE";
+        public const string DefaultChannel = "production";
+
+        private const string VersionStudioHash = "version-012732894899482c";
 
         public static string BaseUrl { get; private set; } = null!;
 
@@ -13,28 +15,37 @@
         private static readonly Dictionary<string, int> BaseUrls = new()
         {
             { "https://setup.rbxcdn.com", 0 },
+            { "https://setup-aws.rbxcdn.com", 2 },
             { "https://setup-ak.rbxcdn.com", 2 },
             { "https://roblox-setup.cachefly.net", 2 },
             { "https://s3.amazonaws.com/setup.roblox.com", 4 }
         };
 
-        private static async Task<string?> TestConnection(string url, int priority)
+        private static async Task<string?> TestConnection(string url, int priority, CancellationToken token)
         {
-            string LOG_IDENT = $"RobloxDeployment::TestConnection.{url}";
+            string LOG_IDENT = $"RobloxDeployment::TestConnection<{url}>";
 
-            await Task.Delay(priority * 1000);
-
-            if (BaseUrl is not null)
-                return null;
+            await Task.Delay(priority * 1000, token);
 
             App.Logger.WriteLine(LOG_IDENT, "Connecting...");
 
             try
             {
-                var response = await App.HttpClient.GetAsync($"{url}/version");
+                var response = await App.HttpClient.GetAsync($"{url}/versionStudio", token);
                 
-                if (!response.IsSuccessStatusCode)
-                    throw new HttpResponseException(response);
+                response.EnsureSuccessStatusCode();
+
+                // versionStudio is the version hash for the last MFC studio to be deployed.
+                // the response body should always be "version-012732894899482c".
+                string content = await response.Content.ReadAsStringAsync(token);
+
+                if (content != VersionStudioHash)
+                    throw new InvalidHTTPResponseException($"versionStudio response does not match (expected \"{VersionStudioHash}\", got \"{content}\")");
+            }
+            catch (TaskCanceledException)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Connectivity test cancelled.");
+                throw;
             }
             catch (Exception ex)
             {
@@ -52,15 +63,14 @@
             // this function serves double duty as the setup mirror enumerator, and as our connectivity check
             // since we're basically asking four different urls for the exact same thing, if all four fail, then it has to be a user-side problem
 
-            // this should be checked for in the installer, in the menu, and in the bootstrapper, as each of those have a dedicated spot they show in
+            // this should be checked for in the installer and in the bootstrapper
 
             // returns null for success
 
-            if (!String.IsNullOrEmpty(BaseUrl))
-                return null;
+            var tokenSource = new CancellationTokenSource();
 
             var exceptions = new List<Exception>();
-            var tasks = (from entry in BaseUrls select TestConnection(entry.Key, entry.Value)).ToList();
+            var tasks = (from entry in BaseUrls select TestConnection(entry.Key, entry.Value, tokenSource.Token)).ToList();
 
             App.Logger.WriteLine(LOG_IDENT, "Testing connectivity...");
 
@@ -79,6 +89,9 @@
                 break;
             }
 
+            // stop other running connectivity tests
+            tokenSource.Cancel();
+
             if (String.IsNullOrEmpty(BaseUrl))
                 return exceptions[0];
 
@@ -87,14 +100,11 @@
             return null;
         }
 
-        public static string GetLocation(string resource, string? channel = null)
+        public static string GetLocation(string resource, string channel = DefaultChannel)
         {
-            if (string.IsNullOrEmpty(channel))
-                channel = App.Settings.Prop.Channel;
-
             string location = BaseUrl;
 
-            if (channel.ToLowerInvariant() != DefaultChannel.ToLowerInvariant())
+            if (String.Compare(channel, DefaultChannel, StringComparison.InvariantCultureIgnoreCase) != 0)
             {
                 string channelName;
 
@@ -111,13 +121,17 @@
             return location;
         }
 
-        public static async Task<ClientVersion> GetInfo(string channel, bool extraInformation = false, string binaryType = "WindowsPlayer")
+        public static async Task<ClientVersion> GetInfo(string channel, string binaryType = "WindowsPlayer")
         {
             const string LOG_IDENT = "RobloxDeployment::GetInfo";
 
-            App.Logger.WriteLine(LOG_IDENT, $"Getting deploy info for channel {channel} (extraInformation={extraInformation})");
+            App.Logger.WriteLine(LOG_IDENT, $"Getting deploy info for channel {channel}");
+
+            if (String.IsNullOrEmpty(channel))
+                channel = DefaultChannel;
 
             string cacheKey = $"{channel}-{binaryType}";
+
             ClientVersion clientVersion;
 
             if (ClientVersionCache.ContainsKey(cacheKey))
@@ -127,70 +141,36 @@
             }
             else
             {
-                string path = $"/v2/client-version/{binaryType}/channel/{channel}";
-                HttpResponseMessage deployInfoResponse;
+                bool isDefaultChannel = String.Compare(channel, DefaultChannel, StringComparison.OrdinalIgnoreCase) == 0;
+
+                string path = $"/v2/client-version/{binaryType}";
+
+                if (!isDefaultChannel)
+                    path = $"/v2/client-version/{binaryType}/channel/{channel}";
 
                 try
                 {
-                    deployInfoResponse = await App.HttpClient.GetAsync("https://clientsettingscdn.roblox.com" + path);
+                    clientVersion = await Http.GetJson<ClientVersion>("https://clientsettingscdn.roblox.com" + path);
                 }
                 catch (Exception ex)
                 {
                     App.Logger.WriteLine(LOG_IDENT, "Failed to contact clientsettingscdn! Falling back to clientsettings...");
                     App.Logger.WriteException(LOG_IDENT, ex);
 
-                    deployInfoResponse = await App.HttpClient.GetAsync("https://clientsettings.roblox.com" + path);
+                    clientVersion = await Http.GetJson<ClientVersion>("https://clientsettings.roblox.com" + path);
                 }
 
-                string rawResponse = await deployInfoResponse.Content.ReadAsStringAsync();
-
-                if (!deployInfoResponse.IsSuccessStatusCode)
+                // check if channel is behind LIVE
+                if (!isDefaultChannel)
                 {
-                    // 400 = Invalid binaryType.
-                    // 404 = Could not find version details for binaryType.
-                    // 500 = Error while fetching version information.
-                    // either way, we throw
+                    var defaultClientVersion = await GetInfo(DefaultChannel);
 
-                    App.Logger.WriteLine(LOG_IDENT,
-                        "Failed to fetch deploy info!\r\n" +
-                        $"\tStatus code: {deployInfoResponse.StatusCode}\r\n" +
-                        $"\tResponse: {rawResponse}"
-                    );
-
-                    throw new HttpResponseException(deployInfoResponse);
+                    if (Utilities.CompareVersions(clientVersion.Version, defaultClientVersion.Version) == VersionComparison.LessThan)
+                        clientVersion.IsBehindDefaultChannel = true;
                 }
 
-                clientVersion = JsonSerializer.Deserialize<ClientVersion>(rawResponse)!;
+                ClientVersionCache[cacheKey] = clientVersion;
             }
-
-            // check if channel is behind LIVE
-            if (channel != DefaultChannel)
-            {
-                var defaultClientVersion = await GetInfo(DefaultChannel);
-
-                if (Utilities.CompareVersions(clientVersion.Version, defaultClientVersion.Version) == -1)
-                    clientVersion.IsBehindDefaultChannel = true;
-            }
-
-            // for preferences
-            if (extraInformation && clientVersion.Timestamp is null)
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Getting extra information...");
-
-                string manifestUrl = GetLocation($"/{clientVersion.VersionGuid}-rbxPkgManifest.txt", channel);
-
-                // get an approximate deploy time from rbxpkgmanifest's last modified date
-                HttpResponseMessage pkgResponse = await App.HttpClient.GetAsync(manifestUrl);
-
-                if (pkgResponse.Content.Headers.TryGetValues("last-modified", out var values))
-                {
-                    string lastModified = values.First();
-                    App.Logger.WriteLine(LOG_IDENT, $"{manifestUrl} - Last-Modified: {lastModified}");
-                    clientVersion.Timestamp = DateTime.Parse(lastModified).ToLocalTime();
-                }
-            }
-
-            ClientVersionCache[cacheKey] = clientVersion;
 
             return clientVersion;
         }
