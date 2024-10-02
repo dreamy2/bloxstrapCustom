@@ -127,7 +127,7 @@
             // since it works like explorer detects changes, the only changes it will detect are:
             // (file start?) and file closed, firing only twice, so it doesnt fire streamed changes stuff
 
-            using StreamReader sr = new(logFileStream);
+            using var sr = new StreamReader(logFileStream);
 
             DateTime lastTime = DateTime.Now;
 
