@@ -16,6 +16,7 @@ namespace Bloxstrap.Models.Persistable
         public bool ForceRobloxLanguage { get; set; } = false;
         public bool UseFastFlagManager { get; set; } = true;
         public bool WPFSoftwareRender { get; set; } = false;
+        public bool EnableAnalytics { get; set; } = true;
 
         // integration configuration
         public bool EnableActivityTracking { get; set; } = true;
@@ -24,6 +25,7 @@ namespace Bloxstrap.Models.Persistable
         public bool CanGameSetWindowTitle { get; set; } = true;
         public int  WindowLogReadFPS { get; set; } = 60;
         public bool HideRPCButtons { get; set; } = true;
+        public bool ShowAccountOnRichPresence { get; set; } = false;
         public bool ShowServerDetails { get; set; } = false;
         public ObservableCollection<CustomIntegration> CustomIntegrations { get; set; } = new();
 
