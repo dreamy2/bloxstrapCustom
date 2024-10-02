@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Runtime.InteropServices;
 using System.Drawing;
+using System.Numerics;
 
 public struct Rect {
    public int Left { get; set; }
@@ -53,7 +54,7 @@ namespace Bloxstrap.Integrations
             _foundWindow = !(_currentWindow == (IntPtr)0);
 
             if (_foundWindow) { onWindowFound(); }
-
+            
             screenSizeX = SystemParameters.PrimaryScreenWidth;
             screenSizeY = SystemParameters.PrimaryScreenHeight;
         }
@@ -70,14 +71,14 @@ namespace Bloxstrap.Integrations
             _startingY = _lastY;
             _startingWidth = _lastWidth;
             _startingHeight = _lastHeight;
-
+            
             //dpi awareness
             using (Graphics graphics = Graphics.FromHwnd(_currentWindow))
-                {
-                    screenSizeX *= (double)(graphics.DpiX / 96);
-                    screenSizeY *= (double)(graphics.DpiY / 96);
-                }
-
+            {
+                screenSizeX *= (double)(graphics.DpiX / 96);
+                screenSizeY *= (double)(graphics.DpiY / 96);
+            }
+            
             App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
         }
 
@@ -131,11 +132,11 @@ namespace Bloxstrap.Integrations
                 case "SetWindow": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
 
-                    Models.BloxstrapRPC.WindowMessage? windowData;
+                    WindowMessage? windowData;
 
                     try
                     {
-                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowMessage>();
+                        windowData = message.Data.Deserialize<WindowMessage>();
                     }
                     catch (Exception)
                     {
@@ -189,10 +190,10 @@ namespace Bloxstrap.Integrations
                 case "SetWindowTitle": case "SetTitle": {
                     if (!App.Settings.Prop.CanGameSetWindowTitle) {return;}
 
-                    Models.BloxstrapRPC.WindowTitle? windowData;
+                    WindowTitle? windowData;
                     try
                     {
-                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowTitle>();
+                        windowData = message.Data.Deserialize<WindowTitle>();
                     }
                     catch (Exception)
                     {
@@ -258,11 +259,11 @@ namespace Bloxstrap.Integrations
                 }*/
                 case "SetWindowTransparency": {
                     if (!App.Settings.Prop.CanGameMoveWindow) {return;}
-                    Models.BloxstrapRPC.WindowTransparency? windowData;
+                    WindowTransparency? windowData;
 
                     try
                     {
-                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowTransparency>();
+                        windowData = message.Data.Deserialize<WindowTransparency>();
                     }
                     catch (Exception)
                     {
