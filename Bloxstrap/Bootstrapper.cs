@@ -17,6 +17,8 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 using Bloxstrap.AppData;
+using System.Windows.Shell;
+using Bloxstrap.UI.Elements.Bootstrapper.Base;
 
 using ICSharpCode.SharpZipLib.Zip;
 
@@ -26,7 +28,10 @@ namespace Bloxstrap
     {
         #region Properties
         private const int ProgressBarMaximum = 10000;
-      
+
+        private const double TaskbarProgressMaximumWpf = 1; // this can not be changed. keep it at 1.
+        private const int TaskbarProgressMaximumWinForms = WinFormsDialogBase.TaskbarProgressMaximum;
+
         private const string AppSettings =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
             "<Settings>\r\n" +
@@ -38,14 +43,16 @@ namespace Bloxstrap
         private readonly CancellationTokenSource _cancelTokenSource = new();
 
         private readonly IAppData AppData;
+        private readonly LaunchMode _launchMode;
 
         private string _launchCommandLine = App.LaunchSettings.RobloxLaunchArgs;
-        private LaunchMode _launchMode = App.LaunchSettings.RobloxLaunchMode;
         private string _latestVersionGuid = null!;
         private PackageManifest _versionPackageManifest = null!;
 
         private bool _isInstalling = false;
         private double _progressIncrement;
+        private double _taskbarProgressIncrement;
+        private double _taskbarProgressMaximum;
         private long _totalDownloadedBytes = 0;
 
         private bool _mustUpgrade => String.IsNullOrEmpty(AppData.State.VersionGuid) || File.Exists(AppData.LockFilePath) || !File.Exists(AppData.ExecutablePath);
@@ -59,8 +66,10 @@ namespace Bloxstrap
         #endregion
 
         #region Core
-        public Bootstrapper()
+        public Bootstrapper(LaunchMode launchMode)
         {
+            _launchMode = launchMode;
+
             // this is now always enabled as of v2.8.0
             if (Dialog is not null)
                 Dialog.CancelEnabled = true;
@@ -89,6 +98,7 @@ namespace Bloxstrap
             if (Dialog is null)
                 return;
 
+            // UI progress
             int progressValue = (int)Math.Floor(_progressIncrement * _totalDownloadedBytes);
 
             // bugcheck: if we're restoring a file from a package, it'll incorrectly increment the progress beyond 100
@@ -96,6 +106,12 @@ namespace Bloxstrap
             progressValue = Math.Clamp(progressValue, 0, ProgressBarMaximum);
 
             Dialog.ProgressValue = progressValue;
+
+            // taskbar progress
+            double taskbarProgressValue = _taskbarProgressIncrement * _totalDownloadedBytes;
+            taskbarProgressValue = Math.Clamp(taskbarProgressValue, 0, _taskbarProgressMaximum);
+
+            Dialog.TaskbarProgressValue = taskbarProgressValue;
         }
         
         public async Task Run()
@@ -253,6 +269,9 @@ namespace Bloxstrap
         private async Task CheckLatestVersion()
         {
             const string LOG_IDENT = "Bootstrapper::CheckLatestVersion";
+
+            if (channel != "production")
+                App.SendStat("robloxChannel", channel);
 
             ClientVersion clientVersion;
 
@@ -420,23 +439,25 @@ namespace Bloxstrap
                     autoclosePids.Add(pid);
             }
 
-            string args = _appPid.ToString();
+            string argPids = _appPid.ToString();
 
             if (autoclosePids.Any())
-                args += $";{String.Join(',', autoclosePids)}";
+                argPids += $";{String.Join(',', autoclosePids)}";
 
-            if (App.Settings.Prop.EnableActivityTracking || autoclosePids.Any())
+            if (App.Settings.Prop.EnableActivityTracking || App.LaunchSettings.TestModeFlag.Active || autoclosePids.Any())
             {
                 using var ipl = new InterProcessLock("Watcher", TimeSpan.FromSeconds(5));
 
-                // TODO: look into if this needs to be launched *before* roblox starts
+                string args = $"-watcher \"{argPids}\"";
+
+                if (App.LaunchSettings.TestModeFlag.Active)
+                    args += " -testmode";
+
                 if (ipl.IsAcquired)
-                    Process.Start(Paths.Process, $"-watcher \"{args}\"");
+                    Process.Start(Paths.Process, args);
             }
         }
 
-        // TODO: the bootstrapper dialogs call this function directly.
-        // this should probably be behind an event invocation.
         public void Cancel()
         {
             const string LOG_IDENT = "Bootstrapper::Cancel";
@@ -872,11 +893,20 @@ namespace Bloxstrap
             if (Dialog is not null)
             {
                 Dialog.ProgressStyle = ProgressBarStyle.Continuous;
+                Dialog.TaskbarProgressState = TaskbarItemProgressState.Normal;
 
                 Dialog.ProgressMaximum = ProgressBarMaximum;
 
                 // compute total bytes to download
-                _progressIncrement = (double)ProgressBarMaximum / _versionPackageManifest.Sum(package => package.PackedSize);
+                int totalPackedSize = _versionPackageManifest.Sum(package => package.PackedSize);
+                _progressIncrement = (double)ProgressBarMaximum / totalPackedSize;
+
+                if (Dialog is WinFormsDialogBase)
+                    _taskbarProgressMaximum = (double)TaskbarProgressMaximumWinForms;
+                else
+                    _taskbarProgressMaximum = (double)TaskbarProgressMaximumWpf;
+
+                _taskbarProgressIncrement = _taskbarProgressMaximum / (double)totalPackedSize;
             }
 
             var extractionTasks = new List<Task>();
@@ -902,11 +932,8 @@ namespace Bloxstrap
 
             if (Dialog is not null)
             {
-                // allow progress bar to 100% before continuing (purely ux reasons lol)
-                // TODO: come up with a better way of handling this that is non-blocking
-                await Task.Delay(1000);
-
                 Dialog.ProgressStyle = ProgressBarStyle.Marquee;
+                Dialog.TaskbarProgressState = TaskbarItemProgressState.Indeterminate;
                 SetStatus(Strings.Bootstrapper_Status_Configuring);
             }
 
@@ -1268,9 +1295,6 @@ namespace Bloxstrap
             if (File.Exists(package.DownloadPath))
                 return;
 
-            // TODO: telemetry for this. chances are that this is completely unnecessary and that it can be removed.
-            // but, we need to ensure this doesn't work before we can do that.
-
             const int maxTries = 5;
 
             bool statIsRetrying = false;
@@ -1332,8 +1356,7 @@ namespace Bloxstrap
 
                     if (ex.GetType() == typeof(ChecksumFailedException))
                     {
-                        if (App.Settings.Prop.EnableAnalytics)
-                            _ = App.HttpClient.GetAsync($"https://bloxstraplabs.com/metrics/post?key=packageDownloadState&value=httpFail");
+                        App.SendStat("packageDownloadState", "httpFail");
 
                         Frontend.ShowConnectivityDialog(
                             Strings.Dialog_Connectivity_UnableToDownload,
@@ -1365,11 +1388,8 @@ namespace Bloxstrap
                 }
             }
 
-            if (statIsRetrying && App.Settings.Prop.EnableAnalytics)
-            {
-                string stat = statIsHttp ? "httpSuccess" : "retrySuccess";
-                _ = App.HttpClient.GetAsync($"https://bloxstraplabs.com/metrics/post?key=packageDownloadState&value={stat}");
-            }
+            if (statIsRetrying)
+                App.SendStat("packageDownloadState", statIsHttp ? "httpSuccess" : "retrySuccess");
         }
 
         private void ExtractPackage(Package package, List<string>? files = null)
