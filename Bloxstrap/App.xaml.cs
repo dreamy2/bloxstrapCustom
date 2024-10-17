@@ -1,11 +1,10 @@
 ﻿using System.Reflection;
 using System.Security.Cryptography;
 using System.Windows;
+using System.Windows.Shell;
 using System.Windows.Threading;
 
 using Microsoft.Win32;
-
-using Bloxstrap.Models.SettingTasks.Base;
 
 namespace Bloxstrap
 {
@@ -14,12 +13,16 @@ namespace Bloxstrap
     /// </summary>
     public partial class App : Application
     {
+#if QA_BUILD
+        public const string ProjectName = "Bloxstrap-QA";
+#else
         public const string ProjectName = "Bloxstrap";
-        public const string ProjectOwner = "pizzaboxer";
-        public const string ProjectRepository = "pizzaboxer/bloxstrap";
+#endif
+        public const string ProjectOwner = "Bloxstrap";
+        public const string ProjectRepository = "bloxstraplabs/bloxstrap";
         public const string ProjectDownloadLink = "https://bloxstraplabs.com";
-        public const string ProjectHelpLink = "https://github.com/pizzaboxer/bloxstrap/wiki";
-        public const string ProjectSupportLink = "https://github.com/pizzaboxer/bloxstrap/issues/new";
+        public const string ProjectHelpLink = "https://github.com/bloxstraplabs/bloxstrap/wiki";
+        public const string ProjectSupportLink = "https://github.com/bloxstraplabs/bloxstrap/issues/new";
 
         public const string RobloxPlayerAppName = "RobloxPlayerBeta";
         public const string RobloxStudioAppName = "RobloxStudioBeta";
@@ -32,6 +35,8 @@ namespace Bloxstrap
         public static BuildMetadataAttribute BuildMetadata = Assembly.GetExecutingAssembly().GetCustomAttribute<BuildMetadataAttribute>()!;
 
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version!.ToString()[..^2];
+
+        public static Bootstrapper? Bootstrapper { get; set; } = null!;
 
         public static bool IsActionBuild => !String.IsNullOrEmpty(BuildMetadata.CommitRef);
 
@@ -102,6 +107,14 @@ namespace Bloxstrap
 
             _showingExceptionDialog = true;
 
+            if (Bootstrapper?.Dialog != null)
+            {
+                if (Bootstrapper.Dialog.TaskbarProgressValue == 0)
+                    Bootstrapper.Dialog.TaskbarProgressValue = 1; // make sure it's visible
+
+                Bootstrapper.Dialog.TaskbarProgressState = TaskbarItemProgressState.Error;
+            }
+
             Frontend.ShowExceptionDialog(ex);
 
             Terminate(ErrorCode.ERROR_INSTALL_FAILURE);
@@ -170,7 +183,12 @@ namespace Bloxstrap
             else
             {
                 Logger.WriteLine(LOG_IDENT, $"Compiled {BuildMetadata.Timestamp.ToFriendlyString()} from {BuildMetadata.Machine}");
-                userAgent += $" (Build {BuildMetadata.Machine})";
+
+#if QA_BUILD
+                userAgent += " (QA)";
+#else
+                userAgent += $" (Build {Convert.ToBase64String(Encoding.UTF8.GetBytes(BuildMetadata.Machine))})";
+#endif
             }
 
             Logger.WriteLine(LOG_IDENT, $"Loaded from {Paths.Process}");
