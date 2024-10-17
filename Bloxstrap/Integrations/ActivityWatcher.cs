@@ -83,14 +83,13 @@
 
             if (App.Settings.Prop.CanGameMoveWindow) // so window can move each frame
                 delay = windowLogDelay; //todo: make it not start like this (that's why its a public var)
-
-            string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
             
             FileInfo logFileInfo;
 
+            string logDirectory = Path.Combine(Paths.LocalAppData, "Roblox\\logs");
+
             if (String.IsNullOrEmpty(LogLocation))
             {
-
                 if (!Directory.Exists(logDirectory))
                     return;
 
@@ -150,7 +149,7 @@
                 string? log = await streamReader.ReadLineAsync();
 
                 if (log is null)
-                    logUpdatedEvent.WaitOne(delay);
+                    await Task.Delay(delay);
                 else
                     ReadLogEntry(log);
             }
