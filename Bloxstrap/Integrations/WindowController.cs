@@ -82,6 +82,11 @@ namespace Bloxstrap.Integrations
             App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
         }
 
+        public void stopWindow() {
+            _activityWatcher.delay = 250; // reset delay
+            resetWindow();
+        }
+
         public void resetWindow() {
             _lastX = _startingX;
             _lastY = _startingY;
@@ -115,20 +120,17 @@ namespace Bloxstrap.Integrations
 
             switch(message.Command)
             {
-                case "BeginListeningWindow": {
+                case "InitWindow": {
                     _activityWatcher.delay = _activityWatcher.windowLogDelay;
                     break;
                 }
-                case "StopListeningWindow": {
-                    _activityWatcher.delay = 250;
+                case "StopWindow": {
+                    stopWindow();
                     break;
                 }
-                case "RestoreWindowState": case "RestoreWindow": case "ResetWindow":
+                case "ResetWindow":
                     resetWindow();
                     break;
-                case "MakeWindow": {
-                    break;
-                }
                 case "SetWindow": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
 
@@ -333,9 +335,6 @@ namespace Bloxstrap.Integrations
         
         [DllImport("user32.dll")]
         static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll")]
-        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
         static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
