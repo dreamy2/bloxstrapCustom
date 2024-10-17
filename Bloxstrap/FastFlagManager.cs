@@ -20,15 +20,6 @@ namespace Bloxstrap
 
             { "Network.Log", "FLogNetwork" },
 
-#if DEBUG
-            { "HTTP.Log", "DFLogHttpTraceLight" },
-
-            { "HTTP.Proxy.Enable", "DFFlagDebugEnableHttpProxy" },
-            { "HTTP.Proxy.Address.1", "DFStringDebugPlayerHttpProxyUrl" },
-            { "HTTP.Proxy.Address.2", "DFStringHttpCurlProxyHostAndPort" },
-            { "HTTP.Proxy.Address.3", "DFStringHttpCurlProxyHostAndPortForExternalUrl" },
-#endif
-
             { "Rendering.Framerate", "DFIntTaskSchedulerTargetFps" },
             { "Rendering.ManualFullscreen", "FFlagHandleAltEnterFullscreenManually" },
             { "Rendering.DisableScaling", "DFFlagDisableDPIScale" },
@@ -49,9 +40,6 @@ namespace Bloxstrap
 
             { "UI.Hide", "DFIntCanHideGuiGroupId" },
             { "UI.FontSize", "FIntFontSizePadding" },
-#if DEBUG
-            { "UI.FlagState", "FStringDebugShowFlagState" },
-#endif
 
             { "UI.FullscreenTitlebarDelay", "FIntFullscreenTitleBarTriggerDelayMillis" },
             
@@ -64,7 +52,8 @@ namespace Bloxstrap
 
             { "UI.Menu.Style.ABTest.1", "FFlagEnableMenuControlsABTest" },
             { "UI.Menu.Style.ABTest.2", "FFlagEnableV3MenuABTest3" },
-            { "UI.Menu.Style.ABTest.3", "FFlagEnableInGameMenuChromeABTest3" }
+            { "UI.Menu.Style.ABTest.3", "FFlagEnableInGameMenuChromeABTest3" },
+            { "UI.Menu.Style.ABTest.4", "FFlagEnableInGameMenuChromeABTest4" }
         };
 
         public static IReadOnlyDictionary<RenderingMode, string> RenderingModes => new Dictionary<RenderingMode, string>
