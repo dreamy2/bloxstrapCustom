@@ -96,31 +96,10 @@ end
 
 To install a build:
 
-    --> Already installed bloxstrap:
-            Do Win+R and paste "%localappdata%\Bloxstrap" and run
-            Replace .exe file with the new one downloaded
-        
-    --> Havent installed bloxstrap:
-            Running the exe should install the fork not sure
-            If it doesnt work but it installs, do the "Already installed bloxstrap" steps
+    Running the exe should install/update the fork
+    If it doesnt work try installing normal bloxstrap and then repeating the step before should work
 
 Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
-<p align="center">
-    <img src="https://github.com/pizzaboxer/bloxstrap/raw/main/Images/Bloxstrap-full-dark.png#gh-dark-mode-only" width="420">
-    <img src="https://github.com/pizzaboxer/bloxstrap/raw/main/Images/Bloxstrap-full-light.png#gh-light-mode-only" width="420">
-</p>
-
-<div align="center">
-
-[![License][shield-repo-license]][repo-license]
-[![GitHub Workflow Status][shield-repo-workflow]][repo-actions]
-[![Crowdin][shield-crowdin-status]][crowdin-project]
-[![Downloads][shield-repo-releases]][repo-releases]
-[![Version][shield-repo-latest]][repo-latest]
-[![Discord][shield-discord-server]][discord-invite]
-[![lol][shield-tenor-meme]][tenor-gif]
-
-</div>
 
 ----
 
