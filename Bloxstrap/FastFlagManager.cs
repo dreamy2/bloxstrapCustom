@@ -255,9 +255,19 @@ namespace Bloxstrap
             // fflag for detecting if window movement is allowed in order to prevent log bloat when disabled
             SetPreset("WindowMovement", (App.Settings.Prop.CanGameMoveWindow & allowDetection) ? true : null);
 
-            // TODO - remove when activity tracking has been revamped
+            // todo: tracking settings?
+
+            // fflag for detecting if bloxstrap is being used (may remove later)
+            SetPreset("Bloxstrap", allowDetection ? true : null);
+
+            // fflag for detecting if window movement is allowed in order to prevent log bloat when disabled
+            SetPreset("WindowMovement", (App.Settings.Prop.CanGameMoveWindow & allowDetection) ? true : null);
+
             if (GetPreset("Network.Log") != "7")
                 SetPreset("Network.Log", "7");
+
+             if (GetPreset("Rendering.ManualFullscreen") != "False")
+                SetPreset("Rendering.ManualFullscreen", "False");
         }
     }
 }
