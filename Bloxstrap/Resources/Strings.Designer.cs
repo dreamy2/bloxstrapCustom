@@ -1037,7 +1037,9 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please read the following help information, which will open in your web browser when you close this dialog..
+        ///   Looks up a localized string similar to For information about why this could be happening and how this can be resolved, please read [this help article]({0}).
+        ///
+        ///Check if Roblox works with [the original launcher]({1}). If it doesn&apos;t, then this isn&apos;t a Bloxstrap issue. If it does, then refer to the help article..
         /// </summary>
         public static string Dialog_PlayerError_HelpInformation {
             get {
@@ -2751,7 +2753,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Roblox will fully close when you leave a game instead of dropping you back into the app..
+        ///   Looks up a localized string similar to Roblox will fully close when you leave a game instead of going back to the app. [Will break some things!]({0}).
         /// </summary>
         public static string Menu_Integrations_DesktopApp_Description {
             get {
@@ -2940,7 +2942,7 @@ namespace Bloxstrap.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Font size can be adjusted in the Fast Flags tab..
+        ///   Looks up a localized string similar to Font size can be adjusted in the Engine Settings tab..
         /// </summary>
         public static string Menu_Mods_Misc_CustomFont_Description {
             get {
