@@ -38,6 +38,8 @@ namespace Bloxstrap.Integrations
         private int screenWidth = 0;
         private int screenHeight = 0;
 
+        private bool changedWindow = false;
+
         // cache last data to prevent bloating
         private int _lastX = 0;
         private int _lastY = 0;
@@ -126,17 +128,22 @@ namespace Bloxstrap.Integrations
         }
 
         public void resetWindow() {
-            _lastX = _startingX;
-            _lastY = _startingY;
-            _lastWidth = _startingWidth;
-            _lastHeight = _startingHeight;
+            if (changedWindow) {
+                _lastX = _startingX;
+                _lastY = _startingY;
+                _lastWidth = _startingWidth;
+                _lastHeight = _startingHeight;
 
-            _lastTransparency = 1;
-            _lastWindowColor = 0x000000;
+                _lastTransparency = 1;
+                _lastWindowColor = 0x000000;
 
-            // reset sets to defaults on the monitor it was found at the start
-            MoveWindow(_currentWindow,_startingX,_startingY,_startingWidth,_startingHeight,false);
-            SetWindowLong(_currentWindow, -20, 0x00000000);
+                // reset sets to defaults on the monitor it was found at the start
+                MoveWindow(_currentWindow,_startingX,_startingY,_startingWidth,_startingHeight,false);
+                SetWindowLong(_currentWindow, -20, 0x00000000);
+
+                changedWindow = false;
+            }
+            
             SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, "Roblox");
         }
 
@@ -227,6 +234,7 @@ namespace Bloxstrap.Integrations
                         _lastY = (int) (windowData.Y * scaleY + fakeHeightFix);
                     }
 
+                    changedWindow = true;
                     MoveWindow(_currentWindow,_lastX+monitorX,_lastY+monitorY,(int) (_lastWidth*widthMult),(int) (_lastHeight*heightMult),false);
                     //App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
                     break;
@@ -287,6 +295,8 @@ namespace Bloxstrap.Integrations
                         _lastWindowColor = Convert.ToUInt32(windowData.Color, 16);
                     }
 
+                    changedWindow = true;
+
                     if (_lastTransparency == 1)
                     {
                         SetWindowLong(_currentWindow, -20, 0x00000000);
@@ -296,6 +306,7 @@ namespace Bloxstrap.Integrations
                         SetWindowLong(_currentWindow, -20, 0x00FF0000);
                         SetLayeredWindowAttributes(_currentWindow, _lastWindowColor, _lastTransparency, 0x00000001);
                     }
+
                     break;
                 }
                 default: {
