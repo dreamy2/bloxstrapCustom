@@ -2,7 +2,6 @@
 
 public class WindowMessage
 {
-
     [JsonPropertyName("x")]
     public int? X { get; set; }
 

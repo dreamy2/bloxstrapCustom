@@ -2,7 +2,6 @@
 
 public class WindowTransparency
 {
-
     [JsonPropertyName("transparency")]
     public float? Transparency { get; set; }
 
