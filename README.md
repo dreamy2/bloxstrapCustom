@@ -20,12 +20,13 @@
 
 ----
 
---> Minz's fork
-    -- Window movement:
-        (https://streamable.com/b1iqei)
-    -- prob more to come
+!! BUILD DOWNLOAD
+    [Stable Release](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe)
+    [Nightly (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml)
 
-!! CURRENT BUILD -> [Build](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe);
+--> Project: AE's Fork
+    -- Window Movement: (https://streamable.com/b1iqei)
+    -- Changing Window's Title and Chroma color
 
 EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
