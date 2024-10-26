@@ -1,7 +1,6 @@
-﻿using System.Windows;
-using System.Runtime.InteropServices;
-using System.Drawing;
-using System.Numerics;
+﻿using System.Runtime.InteropServices;
+using System.Windows.Forms;
+using Message = Bloxstrap.Models.BloxstrapRPC.Message;
 
 public struct Rect {
    public int Left { get; set; }
@@ -14,25 +13,38 @@ namespace Bloxstrap.Integrations
 {
     public class WindowController : IDisposable
     {
-        private readonly ActivityWatcher _activityWatcher;
-        private IntPtr _currentWindow;
-        private bool _foundWindow = false;
-        public const uint WM_SETTEXT = 0x000C;
+        private readonly ActivityWatcher _activityWatcher; // activity watcher
+        private IntPtr _currentWindow; // roblox's hwnd
+        private bool _foundWindow = false; // basically hwnd != 0
 
-        // 1280x720 as default
-        private double defaultScreenSizeX = 1280;
-        private double defaultScreenSizeY = 720;
+        public const uint WM_SETTEXT = 0x000C; // set window title message
 
-        private double screenSizeX = 0;
-        private double screenSizeY = 0;
+        // 1280x720 as default (prob tweak later)
+        private const int defaultScreenWidth = 1280;
+        private const int defaultScreenHeight = 720;
+
+        // as a test :P
+        private const bool useAllMonitors = false;
+
+        // extra monitors offsets
+        public int monitorX = 0;
+        public int monitorY = 0;
+
+        // size mults (not for ingame use, but for allMonitors)
+        public float widthMult = 1;
+        public float heightMult = 1;
+
+        // screen size
+        private int screenWidth = 0;
+        private int screenHeight = 0;
 
         // cache last data to prevent bloating
         private int _lastX = 0;
         private int _lastY = 0;
         private int _lastWidth = 0;
         private int _lastHeight = 0;
-        private double _lastSCWidth = 0;
-        private double _lastSCHeight = 0;
+        private int _lastSCWidth = 0;
+        private int _lastSCHeight = 0;
         private byte _lastTransparency = 1;
         private uint _lastWindowColor = 0x000000;
 
@@ -45,23 +57,61 @@ namespace Bloxstrap.Integrations
         {
             _activityWatcher = activityWatcher;
             _activityWatcher.OnRPCMessage += (_, message) => OnMessage(message);
+            _activityWatcher.OnGameLeave += (_,_) => stopWindow();
 
-            _lastSCWidth = defaultScreenSizeX;
-            _lastSCHeight = defaultScreenSizeY;
+            _lastSCWidth = defaultScreenWidth;
+            _lastSCHeight = defaultScreenHeight;
 
             // try to find window
             _currentWindow = FindWindow("Roblox");
             _foundWindow = !(_currentWindow == (IntPtr)0);
 
             if (_foundWindow) { onWindowFound(); }
-            
-            screenSizeX = SystemParameters.PrimaryScreenWidth;
-            screenSizeY = SystemParameters.PrimaryScreenHeight;
+        }
+
+        public void updateWinMonitor() {
+            if (useAllMonitors) {
+                screenWidth = SystemInformation.VirtualScreen.Width;
+                screenHeight = SystemInformation.VirtualScreen.Height;
+
+                monitorX = SystemInformation.VirtualScreen.X;
+                monitorY = SystemInformation.VirtualScreen.Y;
+
+                Screen primaryScreen = Screen.PrimaryScreen;
+
+                widthMult = primaryScreen.Bounds.Width/((float)screenWidth);
+                heightMult = primaryScreen.Bounds.Height/((float)screenHeight);
+                return;
+            }
+            var curScreen = Screen.FromHandle(_currentWindow);
+
+            screenWidth = curScreen.Bounds.Width;
+            screenHeight = curScreen.Bounds.Height;
+
+            monitorX = curScreen.Bounds.X;
+            monitorY = curScreen.Bounds.Y;
         }
 
         public void onWindowFound() {
+            const string LOG_IDENT = "WindowController::onWindowFound";
+
+            saveWindow();
+
+            App.Logger.WriteLine(LOG_IDENT, $"Monitor X:{monitorX} Y:{monitorY} W:{screenWidth} H:{screenHeight}");
+            App.Logger.WriteLine(LOG_IDENT, $"Window X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight}");
+        }
+
+        public void stopWindow() {
+            _activityWatcher.delay = 250; // reset delay
+            resetWindow();
+        }
+
+        // not recommended to be used as a save point for in-game movement, just as a save point between manipulation start and end
+        public void saveWindow() {
             Rect winRect = new Rect();
-            GetWindowRect(_currentWindow, ref winRect);    
+            GetWindowRect(_currentWindow, ref winRect);   
+
+            // these positions are in virtualscreen space (returns pos in whole screen not in the monitor they are in) 
             _lastX = winRect.Left;
             _lastY = winRect.Top;
             _lastWidth = winRect.Right - winRect.Left;
@@ -71,15 +121,8 @@ namespace Bloxstrap.Integrations
             _startingY = _lastY;
             _startingWidth = _lastWidth;
             _startingHeight = _lastHeight;
-            
-            //dpi awareness
-            using (Graphics graphics = Graphics.FromHwnd(_currentWindow))
-            {
-                screenSizeX *= (double)(graphics.DpiX / 96);
-                screenSizeY *= (double)(graphics.DpiY / 96);
-            }
-            
-            App.Logger.WriteLine("WindowController::onWindowFound", $"WinSize X:{_lastX} Y:{_lastY} W:{_lastWidth} H:{_lastHeight} sW:{screenSizeX} sH:{screenSizeY}");
+
+            updateWinMonitor();
         }
 
         public void resetWindow() {
@@ -88,13 +131,10 @@ namespace Bloxstrap.Integrations
             _lastWidth = _startingWidth;
             _lastHeight = _startingHeight;
 
-            // TODO: maybe not reset scaling props?
-            _lastSCWidth = defaultScreenSizeX;
-            _lastSCHeight = defaultScreenSizeY;
-
             _lastTransparency = 1;
             _lastWindowColor = 0x000000;
 
+            // reset sets to defaults on the monitor it was found at the start
             MoveWindow(_currentWindow,_startingX,_startingY,_startingWidth,_startingHeight,false);
             SetWindowLong(_currentWindow, -20, 0x00000000);
             SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, "Roblox");
@@ -113,22 +153,24 @@ namespace Bloxstrap.Integrations
 
             if (_currentWindow == (IntPtr)0) {return;}
 
+            // NOTE: if a command has multiple aliases, use the first one that shows up, the others are just for compatibility and may be removed in the future
             switch(message.Command)
             {
-                case "BeginListeningWindow": {
+                case "InitWindow": {
                     _activityWatcher.delay = _activityWatcher.windowLogDelay;
+                    saveWindow();
                     break;
                 }
-                case "StopListeningWindow": {
-                    _activityWatcher.delay = 250;
+                case "StopWindow": {
+                    stopWindow();
                     break;
                 }
-                case "RestoreWindowState": case "RestoreWindow": case "ResetWindow":
+                case "ResetWindow": case "RestoreWindow": // really?? "restorewindow"?? what was i thinking????
                     resetWindow();
                     break;
-                case "MakeWindow": {
+                case "SaveWindow": case "SetWindowDefault":
+                    saveWindow();
                     break;
-                }
                 case "SetWindow": {
                     if (!App.Settings.Prop.CanGameMoveWindow) { break; }
 
@@ -156,24 +198,16 @@ namespace Bloxstrap.Integrations
                     }
 
                     if (windowData.ScaleWidth is not null) {
-                        _lastSCWidth = (double) windowData.ScaleWidth;
+                        _lastSCWidth = (int) windowData.ScaleWidth;
                     }
 
                     if (windowData.ScaleHeight is not null) {
-                        _lastSCHeight = (double) windowData.ScaleHeight;
+                        _lastSCHeight = (int) windowData.ScaleHeight;
                     }
 
-                    // scaling
-                    float scaleX = (float) (screenSizeX / _lastSCWidth);
-                    float scaleY = (float) (screenSizeY / _lastSCHeight);
-
-                    if (windowData.X is not null) {
-                        _lastX = (int) (windowData.X * scaleX);
-                    }
-
-                    if (windowData.Y is not null) {
-                        _lastY = (int) (windowData.Y * scaleY);
-                    }
+                    // scaling (float casting to fix integer division, might change screenWidth to float or something idk)
+                    float scaleX = ((float) screenWidth) / _lastSCWidth;
+                    float scaleY = ((float) screenHeight) / _lastSCHeight;
 
                     if (windowData.Width is not null) {
                         _lastWidth = (int) (windowData.Width * scaleX);
@@ -183,7 +217,17 @@ namespace Bloxstrap.Integrations
                         _lastHeight = (int) (windowData.Height * scaleY);
                     }
 
-                    MoveWindow(_currentWindow,_lastX,_lastY,_lastWidth,_lastHeight,false);
+                    if (windowData.X is not null) {
+                        var fakeWidthFix = (_lastWidth - _lastWidth*widthMult)/2;
+                        _lastX = (int) (windowData.X * scaleX + fakeWidthFix);
+                    }
+
+                    if (windowData.Y is not null) {
+                        var fakeHeightFix = (_lastHeight - _lastHeight*heightMult)/2;
+                        _lastY = (int) (windowData.Y * scaleY + fakeHeightFix);
+                    }
+
+                    MoveWindow(_currentWindow,_lastX+monitorX,_lastY+monitorY,(int) (_lastWidth*widthMult),(int) (_lastHeight*heightMult),false);
                     //App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
                     break;
                 }
@@ -215,48 +259,6 @@ namespace Bloxstrap.Integrations
                     SendMessage(_currentWindow, WM_SETTEXT, IntPtr.Zero, title);
                     break;
                 }
-                // save window state sounds better
-                case "SaveWindowState": case "SetWindowDefault":
-                    _startingX = _lastX;
-                    _startingY = _lastY;
-                    _startingWidth = _lastWidth;
-                    _startingHeight = _lastHeight;
-                    break;
-                /*case "SetWindowBorder": {
-                    if (!App.Settings.Prop.CanGameMoveWindow) { break; }
-                    
-                    Models.BloxstrapRPC.WindowBorderType? windowData;
-
-                    try
-                    {
-                        windowData = message.Data.Deserialize<Models.BloxstrapRPC.WindowBorderType>();
-                    }
-                    catch (Exception)
-                    {
-                        App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization threw an exception)");
-                        return;
-                    }
-
-                    if (windowData is null)
-                    {
-                        App.Logger.WriteLine(LOG_IDENT, "Failed to parse message! (JSON deserialization returned null)");
-                        return;
-                    }
-
-                    string borderType = "windowed";
-                    if (windowData.BorderType is not null) {
-                        borderType = windowData.BorderType;
-                    }
-                    try
-                    {
-                        // fucking hell it's a todo now
-                        // i got rusty as hell in C# apologies
-                    } catch (Exception) {
-                        return;
-                    }
-                    
-                    break;
-                }*/
                 case "SetWindowTransparency": {
                     if (!App.Settings.Prop.CanGameMoveWindow) {return;}
                     WindowTransparency? windowData;
@@ -303,7 +305,7 @@ namespace Bloxstrap.Integrations
         }
         public void Dispose()
         {
-            resetWindow();
+            stopWindow();
             GC.SuppressFinalize(this);
         }
 
@@ -330,12 +332,8 @@ namespace Bloxstrap.Integrations
         [DllImport("user32.dll")]
         public static extern bool GetWindowRect(IntPtr hwnd, ref Rect rectangle);
 
-        
         [DllImport("user32.dll")]
         static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
-
-        [DllImport("user32.dll")]
-        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
         static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);

@@ -2,24 +2,23 @@
 
 public class WindowMessage
 {
-
     [JsonPropertyName("x")]
-    public float? X { get; set; }
+    public int? X { get; set; }
 
     [JsonPropertyName("y")]
-    public float? Y { get; set; }
+    public int? Y { get; set; }
 
     [JsonPropertyName("width")]
-    public float? Width { get; set; }
+    public int? Width { get; set; }
     
     [JsonPropertyName("height")]
-    public float? Height { get; set; }
+    public int? Height { get; set; }
 
     [JsonPropertyName("scaleWidth")]
-    public float? ScaleWidth { get; set; }
+    public int? ScaleWidth { get; set; }
 
     [JsonPropertyName("scaleHeight")]
-    public float? ScaleHeight { get; set; }
+    public int? ScaleHeight { get; set; }
 
     [JsonPropertyName("reset")]
     public bool? Reset { get; set; }

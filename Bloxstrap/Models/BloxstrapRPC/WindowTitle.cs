@@ -2,7 +2,6 @@
 
 public class WindowTitle
 {
-
-    [JsonPropertyName("Name")]
-    public string? Name { get; set; } = ""!;
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
 }
