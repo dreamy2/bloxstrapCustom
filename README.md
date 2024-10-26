@@ -20,18 +20,27 @@
 
 ----
 
-!! BUILD DOWNLOAD
-    [Stable Release](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe)
-    [Nightly (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml)
+# !! BUILD DOWNLOAD
+[Stable Release (compiled by us)](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe)  
+[Latest Commit (compiled by github) (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml)
 
---> Project: AE's Fork
-    -- Window Movement: (https://streamable.com/b1iqei)
-    -- Changing Window's Title and Chroma color
+## How to install
+Running the exe or replacing it with bloxstap's exe should install/update the fork  
+If it doesnt work try installing normal bloxstrap and then repeating the step before should work  
+Bloxstrap installation path (where bloxstrap's exe file is) is <i>%localappdata%/Bloxstrap</i> (use Win+R or the file explorer address path to go there)
+
+# <b>[Project: AE](https://www.roblox.com/groups/17371285/Project-AE)'s Fork</b>  
+Features:  
+    - [Window Movement](https://youtu.be/MgWMiGAx68g?si=1SOBrE3CMPgg8lhC&t=96)  
+    - [Changing Window's Title and Chroma color](https://youtu.be/i03Aiic6DbI?si=XzGEkdJkqdEbOu-C&t=112)
+
+Note: On smaller screens (includes DPI zoomed screens), roblox may force a minimum size for the window, to remove it you can enable fullscreen, which also removes the window border but everytime you click the window it will fullscreen until the game sends a window update (we can't do anything about it afaik)
 
 EXAMPLE CODE (FOR BLOXSTRAPRPC SDK)
 
 ```luau
 -- scaleWidth and scaleHeight are the screen size used for window data, so it can be scaled in other screens
+-- might change naming to baseWidth and baseHeight in the future
 local next = next;
 local round = math.round;
 
@@ -39,14 +48,15 @@ export type Window = {
     x:				number?,
     y: 				number?,
     width:			number?,
-    height: 		number?,
+    height: 			number?,
 
-    scaleWidth: 	number?,
-    scaleHeight: 	number?,
+    scaleWidth: 		number?,
+    scaleHeight: 		number?,
 
     reset:			boolean?,
 }
 
+-- note: since fflags are getting whitelisted, this method may not work in the future, an alternative way for detection is in the works
 function GetFFlag(flag)
 	local suc,result = pcall(function()
 		return UserSettings():IsUserFeatureEnabled(flag);
@@ -94,13 +104,6 @@ function BloxstrapRPC.SetWindow(data:Window)
     BloxstrapRPC.SendMessage("SetWindow", diff)
 end
 ```
-
-To install a build:
-
-    Running the exe should install/update the fork
-    If it doesnt work try installing normal bloxstrap and then repeating the step before should work
-
-Note: Roblox has a window size minimum, to remove it enable fullscreen, this also removes the window border
 
 ----
 
