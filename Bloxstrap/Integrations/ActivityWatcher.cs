@@ -114,8 +114,6 @@
                     await Task.Delay(1000);
                 }
 
-                OnLogOpen?.Invoke(this, EventArgs.Empty);
-
                 LogLocation = logFileInfo.FullName;
             }
             else
@@ -123,6 +121,8 @@
                 logFileInfo = new FileInfo(LogLocation);
             }
 
+            OnLogOpen?.Invoke(this, EventArgs.Empty);
+            
             var logFileStream = logFileInfo.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             App.Logger.WriteLine(LOG_IDENT, $"Opened {LogLocation}");
