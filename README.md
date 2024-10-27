@@ -21,7 +21,7 @@
 ----
 
 # !! BUILD DOWNLOAD
-[Stable Release (compiled by us)](https://github.com/Adrigamer278/bloxstrap/raw/main/Images/Bloxstrap.exe)  
+[Stable Release (compiled by us)](https://github.com/Adrigamer278/bloxstrap/releases/latest)  
 [Latest Commit (compiled by github) (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml)
 
 ## How to install
