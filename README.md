@@ -22,7 +22,7 @@
 
 # !! BUILD DOWNLOAD
 [Stable Release (compiled by us)](https://github.com/Adrigamer278/bloxstrap/releases/latest)  
-[Latest Commit (compiled by github) (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml)
+[Latest Commit (compiled by github) (use .exe from latest workflow artifact)](https://github.com/Adrigamer278/bloxstrap/actions/workflows/ci-release.yml?query=is%3Asuccess+branch%3Amain)
 
 ## How to install
 Running the exe or replacing it with bloxstap's exe should install/update the fork  
