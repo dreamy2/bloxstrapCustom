@@ -255,14 +255,6 @@ namespace Bloxstrap
             // fflag for detecting if window movement is allowed in order to prevent log bloat when disabled
             SetPreset("WindowMovement", (App.Settings.Prop.CanGameMoveWindow & allowDetection) ? true : null);
 
-            // todo: tracking settings?
-
-            // fflag for detecting if bloxstrap is being used (may remove later)
-            SetPreset("Bloxstrap", allowDetection ? true : null);
-
-            // fflag for detecting if window movement is allowed in order to prevent log bloat when disabled
-            SetPreset("WindowMovement", (App.Settings.Prop.CanGameMoveWindow & allowDetection) ? true : null);
-
             if (GetPreset("Network.Log") != "7")
                 SetPreset("Network.Log", "7");
 
