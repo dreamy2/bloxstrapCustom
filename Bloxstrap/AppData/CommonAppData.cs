@@ -32,6 +32,7 @@ namespace Bloxstrap.AppData
             { "content-textures3.zip",         @"PlatformContent\pc\textures\" },
             { "content-terrain.zip",           @"PlatformContent\pc\terrain\" },
             { "content-platform-fonts.zip",    @"PlatformContent\pc\fonts\" },
+            { "content-platform-dictionaries.zip", @"PlatformContent\pc\shared_compression_dictionaries\" },
 
             { "extracontent-luapackages.zip",  @"ExtraContent\LuaPackages\" },
             { "extracontent-translations.zip", @"ExtraContent\translations\" },
@@ -41,13 +42,13 @@ namespace Bloxstrap.AppData
         };
 
         public virtual string ExecutableName { get; } = null!;
-        
-        public virtual string Directory { get; } = null!;
 
-        public string LockFilePath => Path.Combine(Directory, "Bloxstrap.lock");
-        
+        public string Directory => Path.Combine(Paths.Versions, State.VersionGuid);
+
         public string ExecutablePath => Path.Combine(Directory, ExecutableName);
-        
+
+        public virtual AppState State { get; } = null!;
+
         public virtual IReadOnlyDictionary<string, string> PackageDirectoryMap { get; set; }
 
 
