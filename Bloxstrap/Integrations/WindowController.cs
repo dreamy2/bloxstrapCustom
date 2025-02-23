@@ -72,6 +72,7 @@ namespace Bloxstrap.Integrations
         }
 
         public void updateWinMonitor() {
+            #pragma warning disable CS0162 // Unreachable code detected
             if (useAllMonitors) {
                 screenWidth = SystemInformation.VirtualScreen.Width;
                 screenHeight = SystemInformation.VirtualScreen.Height;
@@ -85,6 +86,7 @@ namespace Bloxstrap.Integrations
                 heightMult = primaryScreen.Bounds.Height/((float)screenHeight);
                 return;
             }
+            #pragma warning restore CS0162 // Unreachable code detected
             var curScreen = Screen.FromHandle(_currentWindow);
 
             screenWidth = curScreen.Bounds.Width;

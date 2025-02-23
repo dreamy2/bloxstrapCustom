@@ -43,7 +43,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         {
             InitializeComponent();
 
-            buttonCancel.Text = Resources.Strings.Common_Cancel;
+            buttonCancel.Text = Strings.Common_Cancel;
 
             ScaleWindow();
             SetupDialog();
