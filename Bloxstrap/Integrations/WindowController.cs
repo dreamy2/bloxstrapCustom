@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Message = Bloxstrap.Models.BloxstrapRPC.Message;
 
@@ -11,6 +12,13 @@ public struct Rect {
 
 namespace Bloxstrap.Integrations
 {
+    // Simple model for deserializing the taskbar toggle message
+    public class TaskbarToggle
+    {
+        // If true, show the taskbar; if false, hide it.
+        public bool Toggle { get; set; }
+    }
+
     public class WindowController : IDisposable
     {
         private readonly ActivityWatcher _activityWatcher; // activity watcher
@@ -82,8 +90,8 @@ namespace Bloxstrap.Integrations
 
                 Screen primaryScreen = Screen.PrimaryScreen;
 
-                widthMult = primaryScreen.Bounds.Width/((float)screenWidth);
-                heightMult = primaryScreen.Bounds.Height/((float)screenHeight);
+                widthMult = primaryScreen.Bounds.Width / ((float)screenWidth);
+                heightMult = primaryScreen.Bounds.Height / ((float)screenHeight);
                 return;
             }
             #pragma warning restore CS0162 // Unreachable code detected
@@ -140,7 +148,7 @@ namespace Bloxstrap.Integrations
                 _lastWindowColor = 0x000000;
 
                 // reset sets to defaults on the monitor it was found at the start
-                MoveWindow(_currentWindow,_startingX,_startingY,_startingWidth,_startingHeight,false);
+                MoveWindow(_currentWindow, _startingX, _startingY, _startingWidth, _startingHeight, false);
                 SetWindowLong(_currentWindow, -20, 0x00000000);
 
                 changedWindow = false;
@@ -160,7 +168,7 @@ namespace Bloxstrap.Integrations
                 if (_foundWindow) { onWindowFound(); }
             }
 
-            if (_currentWindow == (IntPtr)0) {return;}
+            if (_currentWindow == (IntPtr)0) { return; }
 
             // NOTE: if a command has multiple aliases, use the first one that shows up, the others are just for compatibility and may be removed in the future
             switch(message.Command)
@@ -174,10 +182,12 @@ namespace Bloxstrap.Integrations
                     stopWindow();
                     break;
                 }
-                case "ResetWindow": case "RestoreWindow": // really?? "restorewindow"?? what was i thinking????
+                case "ResetWindow": 
+                case "RestoreWindow": // really?? "restorewindow"?? what was i thinking????
                     resetWindow();
                     break;
-                case "SaveWindow": case "SetWindowDefault":
+                case "SaveWindow": 
+                case "SetWindowDefault":
                     saveWindow();
                     break;
                 case "SetWindow": {
@@ -227,22 +237,23 @@ namespace Bloxstrap.Integrations
                     }
 
                     if (windowData.X is not null) {
-                        var fakeWidthFix = (_lastWidth - _lastWidth*widthMult)/2;
+                        var fakeWidthFix = (_lastWidth - _lastWidth * widthMult) / 2;
                         _lastX = (int) (windowData.X * scaleX + fakeWidthFix);
                     }
 
                     if (windowData.Y is not null) {
-                        var fakeHeightFix = (_lastHeight - _lastHeight*heightMult)/2;
+                        var fakeHeightFix = (_lastHeight - _lastHeight * heightMult) / 2;
                         _lastY = (int) (windowData.Y * scaleY + fakeHeightFix);
                     }
 
                     changedWindow = true;
-                    MoveWindow(_currentWindow,_lastX+monitorX,_lastY+monitorY,(int) (_lastWidth*widthMult),(int) (_lastHeight*heightMult),false);
+                    MoveWindow(_currentWindow, _lastX + monitorX, _lastY + monitorY, (int) (_lastWidth * widthMult), (int) (_lastHeight * heightMult), false);
                     //App.Logger.WriteLine(LOG_IDENT, $"Updated Window Properties");
                     break;
                 }
-                case "SetWindowTitle": case "SetTitle": {
-                    if (!App.Settings.Prop.CanGameSetWindowTitle) {return;}
+                case "SetWindowTitle": 
+                case "SetTitle": {
+                    if (!App.Settings.Prop.CanGameSetWindowTitle) { return; }
 
                     WindowTitle? windowData;
                     try
@@ -270,7 +281,7 @@ namespace Bloxstrap.Integrations
                     break;
                 }
                 case "SetWindowTransparency": {
-                    if (!App.Settings.Prop.CanGameMoveWindow) {return;}
+                    if (!App.Settings.Prop.CanGameMoveWindow) { return; }
                     WindowTransparency? windowData;
 
                     try
@@ -311,17 +322,54 @@ namespace Bloxstrap.Integrations
 
                     break;
                 }
+                case "ToggleTaskbar": {
+                    // New case: toggle the Windows taskbar visibility.
+                    try
+                    {
+                        TaskbarToggle? toggleData = message.Data.Deserialize<TaskbarToggle>();
+                        if (toggleData is null)
+                        {
+                            App.Logger.WriteLine(LOG_IDENT, "ToggleTaskbar message data is null.");
+                            break;
+                        }
+                        ToggleTaskbar(toggleData.Toggle);
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, $"Error parsing ToggleTaskbar message: {ex.Message}");
+                    }
+                    break;
+                }
                 default: {
                     return;
                 }
             }
         }
+
+        // This method toggles the taskbar visibility based on the 'show' parameter.
+        private void ToggleTaskbar(bool show)
+        {
+            const int SW_HIDE = 0;
+            const int SW_SHOW = 5;
+            // Use the native FindWindow to locate the taskbar via its class name.
+            IntPtr taskbarHandle = FindWindowNative("Shell_TrayWnd", null);
+            if (taskbarHandle != IntPtr.Zero)
+            {
+                ShowWindow(taskbarHandle, show ? SW_SHOW : SW_HIDE);
+            }
+            else
+            {
+                App.Logger.WriteLine("WindowController", "Taskbar handle not found.");
+            }
+        }
+
         public void Dispose()
         {
             stopWindow();
             GC.SuppressFinalize(this);
         }
 
+        // This method searches for the window by title (used for Roblox).
         private IntPtr FindWindow(string title)
         {
             Process[] tempProcesses;
@@ -350,5 +398,13 @@ namespace Bloxstrap.Integrations
 
         [DllImport("user32.dll")]
         static extern bool SetLayeredWindowAttributes(IntPtr hwnd, uint crKey, byte bAlpha, uint dwFlags);
+
+        // Native call to find a window by class name. This is used to locate the taskbar.
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        private static extern IntPtr FindWindowNative(string lpClassName, string lpWindowName);
+
+        // Native call to show or hide a window.
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
     }
 }
